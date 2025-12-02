@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Nova Bank - Calculate Interest</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+        body { font-family: 'Poppins', sans-serif; background: #f8f8fb; }
+    </style>
+</head>
+<body>
+    <%- include('partials/header') %>
+
+    <main class="max-w-xl mx-auto px-4 md:px-8 py-10">
+        <h2 class="text-3xl font-extrabold text-gray-900 mb-6 border-b pb-2">Calculate Estimated Interest</h2>
+        
+        <% if (error) { %>
+            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg mb-8" role="alert">
+                <p class="font-medium">Error: <%= error %></p>
+            </div>
+        <% } %>
+
+        <div class="bg-white p-6 rounded-xl shadow-lg border-t-4 border-cyan-500">
+            <p class="text-gray-600 mb-4">This calculation provides an estimate of the monthly interest earned on your current balance.</p>
+            
+            <div class="space-y-4">
+                
+                <!-- Current Balance -->
+                <div class="p-3 bg-gray-100 rounded-lg">
+                    <p class="text-sm text-gray-500">Current Balance</p>
+                    <p class="font-semibold text-gray-800 text-xl">₹ <%= currentBalance.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) %></p>
+                </div>
+
+                <!-- Interest Rate -->
+                <div class="p-3 bg-gray-100 rounded-lg">
+                    <p class="text-sm text-gray-500">Annual Interest Rate (Simulated)</p>
+                    <p class="font-semibold text-gray-800 text-xl"><%= rate %>%</p>
+                </div>
+
+                <!-- Estimated Monthly Interest Result -->
+                <div class="p-4 bg-cyan-50 rounded-lg border-l-4 border-cyan-600">
+                    <p class="text-lg text-gray-600 font-medium">Estimated Monthly Interest Earned</p>
+                    <p class="text-3xl font-extrabold text-cyan-700">
+                        ₹ <%= estimatedInterest.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) %>
+                    </p>
+                </div>
+
+            </div>
+            
+            <div class="pt-6 text-center">
+                <a href="/user/dashboard" class="text-indigo-600 hover:text-indigo-800 font-medium">← Back to Dashboard</a>
+            </div>
+        </div>
+    </main>
+
+    <%- include('partials/footer') %>
+</body>
+</html>

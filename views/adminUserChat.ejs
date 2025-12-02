@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin - Chat with <%= user.name %></title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+        body { font-family: 'Poppins', sans-serif; background: #f8f8fb; }
+        /* Admin (Our) bubble style */
+        .admin-bubble { background-color: #4F46E5; color: white; border-radius: 12px 12px 0 12px; }
+        /* User (Client) bubble style */
+        .user-bubble { background-color: #E5E7EB; color: #374151; border-radius: 12px 12px 12px 0; }
+    </style>
+</head>
+<body>
+    <%- include('partials/header') %>
+
+    <main class="max-w-3xl mx-auto px-4 md:px-8 py-10">
+        <div class="flex justify-between items-center mb-6 border-b pb-2">
+            <h2 class="text-3xl font-extrabold text-gray-900">Chat: <%= user.name %></h2>
+            <a href="/admin/chats" class="text-indigo-600 hover:text-indigo-800 font-medium">← Back to Chats</a>
+        </div>
+        
+        <div class="bg-white rounded-xl shadow-lg border border-gray-100 flex flex-col h-[80vh]">
+            
+            <!-- Chat Window -->
+            <div id="chat-window" class="flex-grow p-4 md:p-6 overflow-y-auto space-y-4">
+                
+                <% history.forEach(msg => { %>
+                    <% if (msg.role === 'admin') { %>
+                        <!-- Admin Message (Right - Our Reply) -->
+                        <div class="flex justify-end">
+                            <div class="admin-bubble max-w-xs md:max-w-md p-3 text-sm shadow">
+                                <span class="font-semibold text-white">Admin Reply:</span> <%= msg.text %>
+                            </div>
+                        </div>
+                    <% } else { %>
+                        <!-- User Message (Left - Client Message) -->
+                        <div class="flex justify-start">
+                            <div class="user-bubble max-w-xs md:max-w-md p-3 text-sm shadow">
+                                <span class="font-semibold text-gray-700">User:</span> <%= msg.text %>
+                            </div>
+                        </div>
+                    <% } %>
+                <% }) %>
+
+            </div>
+            
+            <!-- Admin Reply Form -->
+            <div class="border-t border-gray-200 p-4 bg-gray-50">
+                <form method="POST" action="/admin/chat-user/<%= user._id %>" class="flex items-center gap-3">
+                    <input name="reply" type="text" class="flex-grow p-3 border border-gray-300 rounded-xl focus:border-indigo-500 outline-none" placeholder="Reply to <%= user.name %>..." required />
+                    <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white p-3 rounded-xl transition active:scale-95">
+                        Send
+                    </button>
+                </form>
+            </div>
+        </div>
+    </main>
+    
+    <script>
+        // Scroll to bottom of chat window on load
+        document.addEventListener('DOMContentLoaded', function() {
+            const chatWindow = document.getElementById('chat-window');
+            if (chatWindow) {
+                chatWindow.scrollTop = chatWindow.scrollHeight;
+            }
+        });
+    </script>
+
+    <%- include('partials/footer') %>
+</body>
+</html>

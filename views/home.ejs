@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nova Bank - Secure & Easy Digital Banking</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Logo Favicon (Base64 SVG) -->
+    <link rel="icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIiBmaWxsPSJub25lIj48cGF0aCBkPSJNNiA5NCBMNiAxMCBMNTAuNSA4OCBMOTQgMTAgTDk0IDk0IiBzdHJva2U9IiM0RjQ2RTUiIHN0cm9rZS13aWR0aD0iMTIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPjxjaXJjbGUgY3g9IjUwIiBjeT0iMjgiIHI9IjgiIGZpbGw9IiMzQjgyRjYiLz48L3N2Zz4=" type="image/svg+xml">
+
+    <style>
+        /* Poppins Font Import & Base Styles */
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap');
+        * {
+            font-family: 'Poppins', sans-serif;
+        }
+        /* Mobile Menu Transition (Inherited from header) */
+        #nav-menu {
+            transition: all 0.3s ease-in-out;
+            max-height: 0;
+            overflow: hidden;
+        }
+        #nav-menu:not(.hidden) {
+            max-height: 500px;
+        }
+        @media (max-width: 767px) {
+            #nav-menu:not(.hidden) {
+                display: flex !important;
+            }
+            #nav-menu.hidden {
+                display: none;
+            }
+        }
+        /* Background image styling for the container */
+        .bg-gradient-custom {
+            /* Use the provided URL for the background */
+            background-image: url('https://raw.githubusercontent.com/prebuiltui/prebuiltui/main/assets/hero/gradientBackground.png');
+            background-size: cover;
+            background-position: center;
+        }
+    </style>
+</head>
+<body>
+
+    <%- include('partials/header') %>
+
+    <!-- Main Content Area -->
+    <main>
+        
+        <!-- ========================================================= -->
+        <!-- 🚀 1. HERO SECTION (Starting the bank journey) -->
+        <!-- ========================================================= -->
+        <div class="bg-gradient-custom text-sm text-gray-500 py-20">
+            <div class="max-w-7xl mx-auto flex flex-col items-center justify-center px-4 text-center">
+                
+                <!-- Tagline -->
+                <div class="flex flex-wrap items-center justify-center gap-2.5 mb-6 border border-gray-500/30 rounded-full bg-gray-300/15 pl-4 p-1 text-sm text-gray-800 max-w-full">
+                    <p>India's Fastest Growing Digital Bank.</p>
+                    <a href="/register" class="flex items-center cursor-pointer gap-2 bg-white border border-gray-500/30 rounded-2xl px-3 py-1 whitespace-nowrap hover:bg-gray-50">
+                        <p>Open Account</p>
+                        <svg width="12" height="9" viewBox="0 0 12 9" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M1 4.5h10.182m-4-3.5 4 3.5-4 3.5" stroke="#6B7280" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                    </a>
+                </div>
+
+                <h1 class="text-4xl sm:text-6xl md:text-6xl font-extrabold max-w-5xl text-gray-700 leading-snug">
+                    Future-Proof Your Finances with Nova Bank.
+                </h1>
+                
+                <p class="max-w-xl text-center mt-6 px-4 text-lg text-gray-500">
+                    We provide easy, secure, and transparent financial services tailored to your needs. Join us to experience banking simplified.
+                </p>
+                
+                <div class="flex flex-col sm:flex-row items-center justify-center gap-4 pt-8">
+                    <a href="/register" class="px-8 py-3.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-semibold transition duration-200 shadow-lg shadow-indigo-300/50">Get Started Now</a>
+                    <a href="#features" class="group px-8 py-3.5 flex items-center gap-2 font-medium text-gray-800 hover:text-indigo-600 transition duration-200 border border-gray-300 rounded-xl bg-white hover:bg-gray-50">
+                        Explore Features
+                        <svg width="12" height="9" viewBox="0 0 12 9" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M1 4.5h10.182m-4-3.5 4 3.5-4 3.5" stroke="#6B7280" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========================================================= -->
+        <!-- 🚀 2. FEATURES SECTION (Trust, Security, Efficiency) -->
+        <!-- ========================================================= -->
+        <section id="features" class="py-16 px-6 md:px-16 lg:px-24 xl:px-32 max-w-7xl mx-auto">
+            <h2 class="text-3xl font-bold text-gray-800 text-center mb-12">Banking Designed for the Digital Age</h2>
+
+            <div class="flex flex-col md:flex-row items-center justify-center">
+                <!-- Image Section (UPDATED) -->
+                <img class="max-w-2xl w-full rounded-2xl shadow-xl md:shadow-2xl" 
+                    src="https://placehold.co/600x500/3730A3/FFFFFF?text=Secure+Mobile+Dashboard" 
+                    onerror="this.onerror=null;this.src='https://raw.githubusercontent.com/prebuiltui/prebuiltui/main/assets/features/card-image-1.png';" 
+                    alt="Secure Nova Bank Mobile Dashboard"
+                >
+                
+                <!-- Feature List Section -->
+                <div class="space-y-10 px-4 md:px-0 mt-10 md:mt-0 md:ml-12">
+                    <div class="flex items-start gap-6 max-w-md">
+                        <div class="p-4 aspect-square bg-violet-100 rounded-full flex-shrink-0 mt-1">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#7F22FE" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-zap"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+                        </div>
+                        <div class="space-y-1">
+                            <h3 class="text-lg font-semibold text-slate-700">Lightning-Fast Transactions</h3>
+                            <p class="text-base text-slate-600">Send and receive money instantly across any network, 24/7, with minimal fees.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-start gap-6 max-w-md">
+                        <div class="p-4 aspect-square bg-green-100 rounded-full flex-shrink-0 mt-1">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#00A63E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-shield"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                        </div>
+                        <div class="space-y-1">
+                            <h3 class="text-lg font-semibold text-slate-700">Unbreachable Security</h3>
+                            <p class="text-base text-slate-600">State-of-the-art encryption, 2FA, and mandatory PIN verification for every withdrawal or transfer.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-start gap-6 max-w-md">
+                        <div class="p-4 aspect-square bg-orange-100 rounded-full flex-shrink-0 mt-1">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#F54900" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trending-up"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline><polyline points="17 6 23 6 23 12"></polyline></svg>
+                        </div>
+                        <div class="space-y-1">
+                            <h3 class="text-lg font-semibold text-slate-700">Smart Financial Insights</h3>
+                            <p class="text-base text-slate-600">Auto-categorized spending and detailed reports to help you save and invest better.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========================================================= -->
+        <!-- 🚀 3. TESTIMONIALS SECTION (Building Trust) -->
+        <!-- ========================================================= -->
+        <section class="py-16 bg-gray-50 px-6 md:px-16 lg:px-24 xl:px-32">
+            <div class="max-w-7xl mx-auto text-center">
+                <h2 class="text-3xl font-bold text-gray-800 mb-4">What Our Clients Say</h2>
+                <p class="text-gray-500 max-w-xl mx-auto mb-12">Hear from real users about how Nova Bank transformed their banking experience.</p>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    
+                    <!-- Testimonial 1 -->
+                    <div class="bg-white p-6 rounded-xl shadow-lg border border-gray-200">
+                        <p class="text-lg text-gray-700 mb-4">"The mandatory PIN for every transaction gives me peace of mind. It’s the safest bank I've ever used."</p>
+                        <div class="flex items-center justify-center pt-2">
+                            <img src="https://placehold.co/40x40/6366F1/FFFFFF?text=A" alt="Avatar" class="w-10 h-10 rounded-full mr-3">
+                            <div class="text-left">
+                                <p class="font-semibold text-gray-800">Anjali Sharma</p>
+                                <p class="text-xs text-gray-500">Retail Manager</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Testimonial 2 -->
+                    <div class="bg-white p-6 rounded-xl shadow-lg border border-gray-200">
+                        <p class="text-lg text-gray-700 mb-4">"Switching to Nova was easy. The dashboard is intuitive, and the transfer speed is incredible."</p>
+                        <div class="flex items-center justify-center pt-2">
+                            <img src="https://placehold.co/40x40/34D399/FFFFFF?text=R" alt="Avatar" class="w-10 h-10 rounded-full mr-3">
+                            <div class="text-left">
+                                <p class="font-semibold text-gray-800">Ravi Kumar</p>
+                                <p class="text-xs text-gray-500">Software Engineer</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Testimonial 3 -->
+                    <div class="bg-white p-6 rounded-xl shadow-lg border border-gray-200">
+                        <p class="text-lg text-gray-700 mb-4">"I appreciate the detailed expense reports. It helps me budget effectively every month. Highly recommended!"</p>
+                        <div class="flex items-center justify-center pt-2">
+                            <img src="https://placehold.co/40x40/F59E0B/FFFFFF?text=P" alt="Avatar" class="w-10 h-10 rounded-full mr-3">
+                            <div class="text-left">
+                                <p class="font-semibold text-gray-800">Priya Patel</p>
+                                <p class="text-xs text-gray-500">Small Business Owner</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========================================================= -->
+        <!-- 🚀 4. FINAL CTA STRIP (Ready to join?) -->
+        <!-- ========================================================= -->
+        <section class="py-16 bg-indigo-700">
+            <div class="max-w-4xl mx-auto text-center px-4">
+                <h2 class="text-4xl font-extrabold text-white mb-4">Ready to Experience Modern Banking?</h2>
+                <p class="text-indigo-200 mb-8 text-lg">Open your Nova Bank account today and manage your money smarter, not harder.</p>
+                <a href="/register" class="px-10 py-4 rounded-xl bg-green-500 hover:bg-green-600 text-white font-bold text-lg transition duration-300 shadow-xl shadow-green-700/30 inline-flex items-center gap-2">
+                    Open Free Account in Minutes
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-right"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                </a>
+            </div>
+        </section>
+
+    </main>
+
+    <%- include('partials/footer') %>
+
+    <!-- JavaScript for Mobile Menu Toggle (Must be here if not in header partial) -->
+    <script>
+        const toggleBtn = document.getElementById('menu-toggle');
+        const navMenu = document.getElementById('nav-menu');
+
+        if (toggleBtn && navMenu) {
+            toggleBtn.addEventListener('click', () => {
+                navMenu.classList.toggle('hidden');
+            });
+        }
+    </script>
+</body>
+</html>

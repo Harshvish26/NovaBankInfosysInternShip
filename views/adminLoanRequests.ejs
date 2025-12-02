@@ -1,0 +1,69 @@
+<%- include('partials/header', { 
+    title: 'Loan Requests', 
+    session: session, 
+    // FIX: Safely pass error and message
+    error: typeof error !== 'undefined' ? error : null, 
+    message: typeof message !== 'undefined' ? message : null 
+}) %>
+
+<main>
+
+    <a href="/admin/dashboard" class="text-blue-600 hover:text-blue-800 font-medium mb-5 inline-flex items-center">
+        <i class="fas fa-arrow-left mr-2"></i>← Back to Dashboard
+    </a>
+
+    <h1 class="text-3xl font-extrabold text-gray-900 mb-6 flex items-center">
+        <i class="fas fa-dollar-sign mr-3 text-blue-600"></i> <%= title %>
+    </h1>
+    
+    <p class="text-gray-600 mb-8">Review and manage all incoming loan requests from registered users.</p>
+
+    <div class="bg-white p-6 md:p-8 rounded-xl shadow-lg border border-gray-100">
+        <% if (loans && loans.length > 0) { %>
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-blue-50/50">
+                        <tr>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">Loan ID</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">User A/C</th>
+                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-600 uppercase tracking-wider">Amount (₹)</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">Reason</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">Status</th>
+                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-600 uppercase tracking-wider">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+                        <% loans.forEach(loan => { 
+                            const statusColor = loan.status === 'Approved' ? 'text-green-600' : (loan.status === 'Pending' ? 'text-yellow-600' : 'text-red-600');
+                        %>
+                        <tr class="hover:bg-blue-50/20">
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900"><%= loan.id %></td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600"><%= loan.accountNumber %></td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-bold text-right text-indigo-600">₹ <%= loan.amount.toLocaleString('en-IN') %></td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600"><%= loan.reason %></td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold <%= statusColor %>"><%= loan.status %></td>
+                            <td class="px-6 py-4 whitespace-nowrap text-right text-sm flex gap-2 justify-end">
+                                <% if (loan.status === 'Pending') { %>
+                                    <!-- Approve Form -->
+                                    <form method="POST" action="/admin/loan-request/approve/<%= loan.id %>">
+                                        <button type="submit" class="text-white px-3 py-1 bg-green-600 rounded-lg hover:bg-green-700 transition">Approve</button>
+                                    </form>
+                                    <!-- Reject Form -->
+                                    <form method="POST" action="/admin/loan-request/reject/<%= loan.id %>">
+                                        <button type="submit" class="text-white px-3 py-1 bg-red-600 rounded-lg hover:bg-red-700 transition">Reject</button>
+                                    </form>
+                                <% } else { %>
+                                    <span class="px-3 py-1 border rounded-lg <%= statusColor %> border-current text-xs">STATUS: <%= loan.status.toUpperCase() %></span>
+                                <% } %>
+                            </td>
+                        </tr>
+                        <% }) %>
+                    </tbody>
+                </table>
+            </div>
+        <% } else { %>
+            <p class="text-gray-500 p-4 bg-gray-50 rounded-lg border border-gray-200 text-center">No outstanding loan requests found.</p>
+        <% } %>
+    </div>
+</main>
+<%- include('partials/footer') %>

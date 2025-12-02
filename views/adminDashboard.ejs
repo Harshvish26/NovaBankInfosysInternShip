@@ -1,0 +1,207 @@
+<%- include('partials/header', { title: 'Admin Dashboard', session: session, error: error, message: message }) %>
+
+<main>
+    
+    <!-- --- Main Dashboard Grid Layout (Two Columns, matching User Dashboard) --- -->
+    <div class="flex flex-col lg:flex-row gap-8 mt-3">
+        
+        <!-- Left Column: Admin Operations (Vertical Services) -->
+        <div class="w-full lg:w-1/4">
+            <h3 class="text-xl font-bold text-gray-800 mb-4 border-b border-blue-200 pb-2 flex items-center">
+                <i class="fas fa-wrench mr-2 text-blue-600"></i> Quick Operations
+            </h3>
+            
+            <!-- Dynamic Vertical Action Links (Injected by JS) -->
+            <div id="vertical-services" class="space-y-3">
+                <!-- Admin Links will be injected here by JS -->
+            </div>
+            
+            <!-- Logout Link (Prominent for Admin) -->
+            <a href="/logout" class="block mt-6 px-4 py-3 bg-gray-100 text-gray-700 border border-gray-300 rounded-xl font-medium hover:bg-gray-200 transition shadow-sm text-center">
+                <i class="fas fa-sign-out-alt mr-2"></i> Log Out Admin
+            </a>
+        </div>
+
+        <!-- Right Column: Main Content (Metrics and User Table) -->
+        <div class="w-full lg:w-3/4">
+
+            <!-- Bank Overview Metrics -->
+            <div class="bg-white p-6 md:p-8 rounded-xl shadow-lg border border-gray-100 mb-8">
+                <h2 class="text-3xl font-extrabold text-gray-900 mb-4">Bank Health Metrics</h2>
+                
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 mt-4">
+                    
+                    <!-- Total Bank Balance -->
+                    <div class="p-5 bg-blue-50 rounded-xl border-l-4 border-blue-600 shadow-md">
+                        <p class="text-lg text-gray-600 font-medium flex items-center mb-1">
+                            <i class="fas fa-university text-xl text-blue-600 mr-2"></i> Total Bank Balance
+                        </p>
+                        <p class="text-4xl font-extrabold text-blue-700">
+                            ₹ <%= totalBalance.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) %>
+                        </p>
+                    </div>
+
+                    <!-- Total Registered Users -->
+                    <div class="p-5 bg-indigo-50 rounded-xl border-l-4 border-indigo-600 shadow-md">
+                         <p class="text-lg text-gray-600 font-medium mb-1">
+                            <i class="fas fa-users text-xl text-indigo-600 mr-2"></i> Total Users
+                        </p>
+                        <p class="text-4xl font-extrabold text-indigo-700">
+                            <%= users.length %>
+                        </p>
+                    </div>
+                    
+                    <!-- Total Transactions (FIX: Using ternary for safety, though router should pass it) -->
+                    <div class="p-5 bg-green-50 rounded-xl border-l-4 border-green-600 shadow-md">
+                         <p class="text-lg text-gray-600 font-medium mb-1">
+                            <i class="fas fa-receipt text-xl text-green-600 mr-2"></i> Total Transactions
+                        </p>
+                        <p class="text-4xl font-extrabold text-green-700">
+                             <% if (typeof totalTxs !== 'undefined' && totalTxs !== null) { %>
+                                ₹ <%= totalTxs.toLocaleString('en-IN') %>
+                            <% } else { %>
+                                N/A
+                            <% } %>
+                        </p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Users Table Section -->
+            <section class="bg-white p-6 md:p-8 rounded-xl shadow-lg border border-gray-100">
+                <h3 class="text-2xl font-semibold text-gray-800 mb-6 flex items-center">
+                    <i class="fas fa-user-friends mr-3 text-blue-600"></i> Manage User Accounts
+                </h3>
+                
+                <% if (users.length === 0) { %>
+                    <p class="text-gray-500 p-4 bg-gray-50 rounded-lg border border-gray-200 text-center">No user accounts found in the system.</p>
+                <% } else { %>
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-blue-50/50">
+                                <tr>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">Name</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">Account</th>
+                                    <th class="px-6 py-3 text-right text-xs font-medium text-gray-600 uppercase tracking-wider">Balance (₹)</th>
+                                    <th class="px-6 py-3 text-right text-xs font-medium text-gray-600 uppercase tracking-wider">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-white divide-y divide-gray-200">
+                                <% users.forEach(u => { %>
+                                    <tr class="hover:bg-blue-50/20 transition">
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                                            <%= u.name %>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 font-mono">
+                                            <%= u.accountNumber %>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-right text-green-600">
+                                            ₹ <%= u.balance.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) %>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium flex justify-end gap-3">
+                                            <!-- View Details Button -->
+                                            <a 
+                                                href="/admin/view-user/<%= u._id %>"
+                                                class="text-blue-600 hover:text-blue-900 bg-blue-100 hover:bg-blue-200 px-3 py-1.5 rounded-lg transition"
+                                            >
+                                                Details
+                                            </a>
+                                            
+                                            <!-- Delete Button -->
+                                            <button 
+                                                onclick="openDeleteModal('<%= u._id %>', '<%= u.name %>')"
+                                                class="text-red-600 hover:text-red-900 bg-red-100 hover:bg-red-200 px-3 py-1.5 rounded-lg transition"
+                                            >
+                                                Delete
+                                            </button>
+                                        </td>
+                                    </tr>
+                                <% }) %>
+                            </tbody>
+                        </table>
+                    </div>
+                <% } %>
+            </section>
+        </div>
+
+    </div> <!-- End of Main Dashboard Grid Layout -->
+    
+    <!-- 💡 Custom Confirmation Modal (For Delete User) -->
+    <div id="delete-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-lg shadow-2xl p-6 w-full max-w-sm">
+            <h3 class="text-xl font-bold text-gray-800 mb-4">Confirm Deletion</h3>
+            <p class="text-gray-600 mb-6">Are you sure you want to delete user <span id="modal-username" class="font-semibold text-red-600"></span>? This action cannot be undone.</p>
+            
+            <form id="delete-form" method="POST">
+                <input type="hidden" name="_id" id="modal-user-id-input">
+                <div class="flex justify-end space-x-3">
+                    <button type="button" onclick="closeDeleteModal()" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition">
+                        Cancel
+                    </button>
+                    <button type="submit" class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition">
+                        Confirm Delete
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- 💡 JAVASCRIPT FOR VERTICAL SERVICE LINKS INJECTION -->
+    <script>
+        // Helper function for rendering vertical links
+        function renderVerticalLink(title, url, iconClass, colorClass) {
+            return `
+                <a href="${url}" class="flex items-center p-3 text-sm rounded-xl bg-white shadow-sm hover:shadow-md transition border border-gray-200 hover:border-blue-400">
+                    <i class="fas ${iconClass} ${colorClass} text-lg w-6 mr-3"></i>
+                    <span class="text-gray-700 font-medium">${title}</span>
+                </a>
+            `;
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const container = document.getElementById('vertical-services');
+            
+            // --- Admin Links Data (Matching Admin Router features) ---
+            const adminLinks = [
+                { title: "Manage Users", url: '/admin/dashboard', icon: 'fa-users-cog', color: 'text-indigo-600' },
+                { title: "Analytics", url: '/admin/analytics', icon: 'fa-chart-bar', color: 'text-green-600' },
+                { title: "Fraud Alerts", url: '/admin/fraud-alerts', icon: 'fa-shield-alt', color: 'text-red-600' },
+                { title: "Loan Requests", url: '/admin/loan-requests', icon: 'fa-dollar-sign', color: 'text-yellow-600' },
+                { title: "Reports", url: '/admin/reports', icon: 'fa-file-pdf', color: 'text-purple-600' },
+                { title: "Send Notice", url: '/admin/send-notice', icon: 'fa-envelope-open-text', color: 'text-pink-600' },
+                { title: "System Logs", url: '/admin/system-logs', icon: 'fa-bug', color: 'text-gray-600' },
+                { title: "Upgrade Acc", url: '/admin/upgrade-accounts', icon: 'fa-crown', color: 'text-teal-600' },
+                { title: "Chat Support", url: '/admin/chats', icon: 'fa-comments', color: 'text-violet-600' },
+            ];
+
+            if (container) {
+                const linksHtml = adminLinks.map(link => 
+                    renderVerticalLink(link.title, link.url, link.icon, link.color)
+                ).join('');
+                container.innerHTML = linksHtml;
+            }
+        });
+
+        // --- Custom Modal Functions (For Delete User) ---
+        const modal = document.getElementById('delete-modal');
+        const deleteForm = document.getElementById('delete-form');
+        const modalUsername = document.getElementById('modal-username');
+
+        function openDeleteModal(userId, userName) {
+            modalUsername.textContent = userName;
+            deleteForm.action = '/admin/delete-user/' + userId; // Set form action dynamically
+            modal.classList.remove('hidden');
+        }
+
+        function closeDeleteModal() {
+            modal.classList.add('hidden');
+        }
+
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                closeDeleteModal();
+            }
+        });
+    </script>
+</main>
+<%- include('partials/footer') %>

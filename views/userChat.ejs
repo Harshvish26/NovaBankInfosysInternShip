@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Nova Bank - Help Chat</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+        body { font-family: 'Poppins', sans-serif; background: #f8f8fb; }
+        .user-bubble { background-color: #4F46E5; color: white; border-radius: 12px 12px 0 12px; }
+        .admin-bubble { background-color: #E5E7EB; color: #374151; border-radius: 12px 12px 12px 0; }
+    </style>
+</head>
+<body>
+    <%- include('partials/header') %>
+
+    <main class="max-w-2xl mx-auto px-4 md:px-8 py-10">
+        <h2 class="text-3xl font-extrabold text-gray-900 mb-6 border-b pb-2">Help & Support Chat</h2>
+        
+        <div class="bg-white rounded-xl shadow-lg border border-gray-100 flex flex-col h-[70vh]">
+            
+            <!-- Chat Window -->
+            <div id="chat-window" class="flex-grow p-4 md:p-6 overflow-y-auto space-y-4">
+                
+                <% history.forEach(msg => { %>
+                    <% if (msg.role === 'user') { %>
+                        <!-- User Message (Right) -->
+                        <div class="flex justify-end">
+                            <div class="user-bubble max-w-xs md:max-w-md p-3 text-sm shadow">
+                                <%= msg.text %>
+                            </div>
+                        </div>
+                    <% } else { %>
+                        <!-- Admin Message (Left) -->
+                        <div class="flex justify-start">
+                            <div class="admin-bubble max-w-xs md:max-w-md p-3 text-sm shadow">
+                                <span class="font-semibold text-indigo-700">Nova Assistant:</span> <%= msg.text %>
+                            </div>
+                        </div>
+                    <% } %>
+                <% }) %>
+
+            </div>
+            
+            <!-- Input Form -->
+            <div class="border-t border-gray-200 p-4 bg-gray-50">
+                <form method="POST" action="/user/chat" class="flex items-center gap-3">
+                    <input name="message" type="text" class="flex-grow p-3 border border-gray-300 rounded-xl focus:border-indigo-500 outline-none" placeholder="Write your message..." required />
+                    <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white p-3 rounded-xl transition active:scale-95">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-send"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 15 2 11 22 2"></polygon></svg>
+                    </button>
+                </form>
+            </div>
+        </div>
+        
+        <div class="mt-8 text-center">
+            <a href="/user/dashboard" class="text-indigo-600 hover:text-indigo-800 font-medium">← Back to Dashboard</a>
+        </div>
+    </main>
+    
+    <script>
+        // Scroll to bottom of chat window on load
+        document.addEventListener('DOMContentLoaded', function() {
+            const chatWindow = document.getElementById('chat-window');
+            if (chatWindow) {
+                chatWindow.scrollTop = chatWindow.scrollHeight;
+            }
+        });
+    </script>
+
+    <%- include('partials/footer') %>
+</body>
+</html>

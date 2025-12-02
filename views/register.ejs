@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Nova Bank - Create Account</title>
+    <!-- Assuming Tailwind is loaded in partials/header.ejs or via CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Poppins Font (for a modern look) */
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #f8f8fb; /* Light background for contrast */
+        }
+    </style>
+</head>
+<body>
+    <%- include('partials/header') %>
+
+    <!-- 🚀 Modernized Registration Form Section -->
+    <main class="flex justify-center items-center py-12 md:py-20 min-h-screen">
+        <form method="POST" action="/register" autocomplete="off" class="bg-white text-gray-500 max-w-lg w-full mx-4 p-8 md:p-10 text-sm rounded-xl shadow-[0px_0px_25px_0px] shadow-indigo-100/50">
+            <h2 class="text-3xl font-bold mb-8 text-center text-gray-800">Create New Account</h2>
+            
+            <!-- Error Message Display -->
+            <% if (error) { %>
+                <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4 text-center" role="alert">
+                    <p><%= error %></p>
+                </div>
+            <% } %>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+                <!-- 1. Name* -->
+                <div class="col-span-1 md:col-span-2 flex items-center border bg-indigo-500/5 border-gray-500/10 rounded-lg gap-3 pl-3 focus-within:border-indigo-400 transition">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6B7280" stroke-opacity=".6" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="feather feather-user"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                    <input class="w-full outline-none bg-transparent py-3 text-gray-800" type="text" name="name" placeholder="Full Name *" value="" required>
+                </div>
+
+                <!-- 2. Email* -->
+                <div class="col-span-1 md:col-span-2 flex items-center border bg-indigo-500/5 border-gray-500/10 rounded-lg gap-3 pl-3 focus-within:border-indigo-400 transition">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6B7280" stroke-opacity=".6" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="feather feather-mail"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+                    <input class="w-full outline-none bg-transparent py-3 text-gray-800" type="email" name="email" placeholder="Email Address *" value="" required>
+                </div>
+
+                <!-- 3. Mobile -->
+                <div class="flex items-center border bg-indigo-500/5 border-gray-500/10 rounded-lg gap-3 pl-3 focus-within:border-indigo-400 transition">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6B7280" stroke-opacity=".6" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="feather feather-phone"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.63A2 2 0 0 1 3.07 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+                    <input class="w-full outline-none bg-transparent py-3 text-gray-800" type="text" name="mobile" placeholder="Mobile Number">
+                </div>
+
+                <!-- 4. Age -->
+                <div class="flex items-center border bg-indigo-500/5 border-gray-500/10 rounded-lg gap-3 pl-3 focus-within:border-indigo-400 transition">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6B7280" stroke-opacity=".6" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="feather feather-calendar"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                    <input class="w-full outline-none bg-transparent py-3 text-gray-800" type="number" name="age" placeholder="Age (Yrs)">
+                </div>
+                
+                <!-- 5. Aadhar -->
+                <div class="flex items-center border bg-indigo-500/5 border-gray-500/10 rounded-lg gap-3 pl-3 focus-within:border-indigo-400 transition">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6B7280" stroke-opacity=".6" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="feather feather-credit-card"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg>
+                    <input class="w-full outline-none bg-transparent py-3 text-gray-800" type="text" name="aadhar" placeholder="Aadhar Number">
+                </div>
+
+                <!-- 6. City -->
+                <div class="flex items-center border bg-indigo-500/5 border-gray-500/10 rounded-lg gap-3 pl-3 focus-within:border-indigo-400 transition">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6B7280" stroke-opacity=".6" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="feather feather-map-pin"><path d="M12 21.7C17.3 17 21 13 21 10.2A7 7 0 0 0 12 3a7 7 0 0 0-9 7.2c0 2.3 3.7 6.3 9 11.5z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                    <input class="w-full outline-none bg-transparent py-3 text-gray-800" type="text" name="city" placeholder="City">
+                </div>
+                
+                <!-- 7. PIN* -->
+                <div class="col-span-1 md:col-span-2 flex items-center border bg-indigo-500/5 border-gray-500/10 rounded-lg gap-3 pl-3 focus-within:border-indigo-400 transition">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6B7280" stroke-opacity=".6" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="feather feather-lock"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                    <input class="w-full outline-none bg-transparent py-3 text-gray-800" type="password" name="pin" placeholder="Set 4-6 digit PIN *" maxlength="6" required>
+                </div>
+            </div>
+
+            <div class="mt-8">
+                <!-- Submit Button -->
+                <button type="submit" class="w-full mb-3 bg-indigo-600 hover:bg-indigo-700 transition-all active:scale-95 py-3 rounded-lg text-white font-semibold shadow-md shadow-indigo-200">
+                    Create Bank Account
+                </button>
+                <p class="text-center text-gray-600 mt-4">Already registered? 
+                    <a href="/login" class="text-indigo-600 hover:text-indigo-800 font-medium underline transition">Log In</a>
+                </p>
+            </div>
+        </form>
+    </main>
+
+    <%- include('partials/footer') %>
+</body>
+</html>

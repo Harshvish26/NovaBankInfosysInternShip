@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Nova Bank - User Login</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #f8f8fb;
+        }
+    </style>
+</head>
+<body>
+    <%- include('partials/header') %>
+
+    <!-- 🚀 Modernized User Login Form Section -->
+    <main class="flex justify-center items-center py-12 md:py-20 min-h-screen pt-20">
+        <form method="POST" action="/login" class="bg-white text-gray-500 max-w-sm w-full mx-4 p-8 md:p-10 text-sm rounded-xl shadow-[0px_0px_25px_0px] shadow-green-100/50">
+            <h2 class="text-3xl font-bold mb-8 text-center text-gray-800">User Login</h2>
+            
+            <% if (error) { %>
+                <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4 text-center" role="alert">
+                    <p><%= error %></p>
+                </div>
+            <% } %>
+
+            <div class="space-y-4">
+
+                <!-- 1. Account Number (ADDED) -->
+                <div class="flex items-center border bg-green-500/5 border-gray-500/10 rounded-lg gap-3 pl-3 focus-within:border-green-400 transition">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6B7280" stroke-opacity=".6" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="feather feather-credit-card"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg>
+                    <input class="w-full outline-none bg-transparent py-3 text-gray-800" type="text" name="accountNumber" placeholder="Account Number" required>
+                </div>
+
+                <!-- 2. Email (Original) -->
+                <div class="flex items-center border bg-green-500/5 border-gray-500/10 rounded-lg gap-3 pl-3 focus-within:border-green-400 transition">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6B7280" stroke-opacity=".6" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="feather feather-mail"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+                    <input class="w-full outline-none bg-transparent py-3 text-gray-800" type="email" name="email" placeholder="Email Address" required>
+                </div>
+
+                <!-- 3. PIN (Original) -->
+                <div class="flex items-center border bg-green-500/5 border-gray-500/10 rounded-lg gap-3 pl-3 focus-within:border-green-400 transition">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6B7280" stroke-opacity=".6" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="feather feather-key"><path d="M12 11c-2.76 0-5 2.24-5 5s2.24 5 5 5c2.76 0 5-2.24 5-5s-2.24-5-5-5z"></path><path d="M22 2l-7 7m0 0l-7-7m7 7l7-7"></path><circle cx="12" cy="16" r="4"></circle></svg>
+                    <input class="w-full outline-none bg-transparent py-3 text-gray-800" type="password" name="pin" placeholder="4-6 digit PIN" required>
+                </div>
+            </div>
+
+            <div class="mt-8">
+                <!-- Submit Button Text Updated -->
+                <button type="submit" class="w-full mb-3 bg-green-600 hover:bg-green-700 transition-all active:scale-95 py-3 rounded-lg text-white font-semibold shadow-md shadow-green-200">
+                    Login & Get OTP
+                </button>
+                <p class="text-center text-gray-600 mt-4">New user? 
+                    <a href="/register" class="text-indigo-600 hover:text-indigo-800 font-medium underline transition">Create Account</a>
+                </p>
+            </div>
+        </form>
+    </main>
+
+    <%- include('partials/footer') %>
+</body>
+</html>

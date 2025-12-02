@@ -1,0 +1,51 @@
+<%- include('partials/header', { 
+    title: 'Analytics & Trends', 
+    session: session, 
+    error: typeof error !== 'undefined' ? error : null, 
+    message: typeof message !== 'undefined' ? message : null 
+}) %>
+
+<main class="pt-5">
+    <!-- Back to Dashboard Link -->
+    <a href="/admin/dashboard" class="text-blue-600 hover:text-blue-800 font-medium mb-5 inline-flex items-center">
+        <i class="fas fa-arrow-left mr-2"></i>← Back to Dashboard
+    </a>
+
+    <h1 class="text-3xl font-extrabold text-gray-900 mb-6 flex items-center">
+        <i class="fas fa-chart-bar mr-3 text-blue-600"></i> <%= title %>
+    </h1>
+    
+    <p class="text-gray-600 mb-8">Analyze key financial trends and metrics across the entire Nova Bank system (Simulated).</p>
+
+    <!-- Analytics Cards (Assuming avgBalance, avgTxAmount, totalLoanRequests are passed) -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-10">
+        
+        <div class="bg-white p-6 rounded-xl shadow-lg border-l-4 border-cyan-600">
+            <p class="text-sm font-medium text-gray-500 uppercase">Avg. Customer Balance</p>
+            <p class="text-3xl font-extrabold text-cyan-700 mt-1">
+                ₹ <%= avgBalance || '0.00' %>
+            </p>
+        </div>
+
+        <div class="bg-white p-6 rounded-xl shadow-lg border-l-4 border-purple-600">
+            <p class="text-sm font-medium text-gray-500 uppercase">Avg. Transaction Value</p>
+            <p class="text-3xl font-extrabold text-purple-700 mt-1">
+                ₹ <%= avgTxAmount || '0.00' %>
+            </p>
+        </div>
+
+        <div class="bg-white p-6 rounded-xl shadow-lg border-l-4 border-yellow-600">
+            <p class="text-sm font-medium text-gray-500 uppercase">Total Loan Requests</p>
+            <p class="text-3xl font-extrabold text-yellow-700 mt-1">
+                <%= totalLoanRequests || 0 %>
+            </p>
+        </div>
+    </div>
+    
+    <!-- Placeholder for charts/graphs -->
+    <div class="bg-white p-6 rounded-xl shadow-lg border border-gray-100 h-96 flex items-center justify-center">
+        <p class="text-gray-500 text-lg font-medium">Data Visualization Area (Charts Placeholder)</p>
+    </div>
+
+</main>
+<%- include('partials/footer') %>

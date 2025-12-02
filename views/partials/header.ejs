@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Logo Favicon (Base64 SVG) -->
+    <link rel="icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIiBmaWxsPSJub25lIj48cGF0aCBkPSJNNiA5NCBMNiAxMCBMNTAuNSA4OCBMOTQgMTAgTDk0IDk0IiBzdHJva2U9IiM0RjQ2RTUiIHN0cm9rZS13aWR0aD0iMTIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPjxjaXJjbGUgY3g9IjUwIiBjeT0iMjgiIHI9IjgiIGZpbGw9IiMzQjgyRjYiLz48L3N2Zz4=" type="image/svg+xml">
+
+    <!-- Tailwind -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap');
+        body {
+            font-family: 'Poppins', sans-serif;
+            padding-top: 80px;
+        }
+
+        /* Smooth mobile menu animation */
+        #mobileMenu {
+            transition: max-height 0.35s ease;
+            max-height: 0;
+            overflow: hidden;
+        }
+        #mobileMenu.open {
+            max-height: 500px;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-50">
+
+<!-- ⭐ NAVBAR -->
+<nav class="fixed top-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-xl shadow-md border-b border-gray-200">
+
+    <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+
+        <!-- Logo -->
+        <a href="/" class="flex items-center gap-2 group">
+            <svg
+                width="32"
+                height="32"
+                viewBox="0 0 100 100"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+                class="flex-shrink-0"
+              >
+                <!-- Background M Shape (using two large segments for clean 'N' effect) -->
+                <path
+                  d="M5 95 L5 10 L50 90 L95 10 L95 90"
+                  stroke="#4F46E5"
+                  stroke-width="10"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+                <!-- Accent Dot (Represents Nova/Digital focus) -->
+                <circle cx="50" cy="25" r="8" fill="#3B82F6" />
+              </svg>
+
+            <span class="text-2xl font-extrabold bg-gradient-to-r from-indigo-600 to-indigo-800 bg-clip-text text-transparent">
+                Nova Bank
+            </span>
+        </a>
+
+        <!-- Desktop Menu -->
+        <ul class="hidden md:flex items-center gap-10 text-gray-700 font-medium">
+
+            <% if (session && session.isAdmin) { %>
+                <li><a href="/admin/dashboard" class="hover:text-indigo-600 transition">Admin Dashboard</a></li>
+            <% } else if (session && session.userId) { %>
+                <li><a href="/user/dashboard" class="hover:text-indigo-600 transition">Dashboard</a></li>
+            <% } else { %>
+                <li><a href="/" class="hover:text-indigo-600 transition">Home</a></li>
+            <% } %>
+
+            <li><a class="hover:text-indigo-600 transition" href="#">Features</a></li>
+            <li><a class="hover:text-indigo-600 transition" href="#">Contact Us</a></li>
+        </ul>
+
+        <!-- Desktop Right Buttons -->
+        <div class="hidden md:flex items-center gap-3">
+
+            <% if (session && session.user && session.user.role === 'admin') { %>
+
+                <span class="text-sm font-semibold">Admin Panel</span>
+
+                <a href="/admin/dashboard"
+                    class="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs shadow">
+                    Dashboard
+                </a>
+
+                <a href="/admin/logout"
+                    class="px-4 py-2 rounded-xl bg-red-600 hover:bg-red-700 text-white text-xs shadow">
+                    Logout
+                </a>
+
+            <% } else if (session && session.userId) { %>
+
+                <span class="text-sm font-semibold">
+                    <%= session.userName %> | <%= session.accountNumber %>
+                </span>
+
+                <a href="/logout" class="px-4 py-2 rounded-xl bg-red-600 hover:bg-red-700 text-white text-xs shadow">
+                    Logout
+                </a>
+
+            <% } else { %>
+
+                <a href="/register" class="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs shadow">
+                    Create Account
+                </a>
+
+                <a href="/login" class="px-4 py-2 rounded-xl bg-green-600 hover:bg-green-700 text-white text-xs shadow">
+                    User Login
+                </a>
+
+                <a href="/admin/login" class="px-4 py-2 rounded-xl bg-gray-700 hover:bg-gray-800 text-white text-xs shadow">
+                    Admin Login
+                </a>
+
+            <% } %>
+
+        </div>
+
+        <!-- Mobile Menu Button -->
+        <button id="mobileBtn" class="md:hidden p-2 rounded-lg hover:bg-gray-200 transition">
+            <svg id="menuIcon" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M4 6h18M4 12h18M4 18h18"/>
+            </svg>
+        </button>
+
+    </div>
+
+    <!-- ⭐ Mobile Menu -->
+    <div id="mobileMenu" class="md:hidden bg-white shadow-inner px-6 py-4 space-y-4">
+
+        <% if (session && session.isAdmin) { %>
+
+            <a href="/admin/dashboard" class="block text-gray-800 font-semibold">Admin Dashboard</a>
+
+            <a href="/admin/logout" class="block text-red-600 font-semibold">Logout</a>
+
+        <% } else if (session && session.userId) { %>
+
+            <p class="font-semibold text-gray-800"><%= session.userName %> | <%= session.accountNumber %></p>
+
+            <a href="/user/dashboard" class="block font-semibold text-indigo-600">Dashboard</a>
+            <a href="/logout" class="block text-red-600 font-semibold">Logout</a>
+
+        <% } else { %>
+
+            <a href="/register" class="block text-indigo-600 font-semibold">Create Account</a>
+            <a href="/login" class="block text-green-600 font-semibold">User Login</a>
+            <a href="/admin/login" class="block text-gray-700 font-semibold">Admin Login</a>
+
+        <% } %>
+
+        <hr class="my-3">
+
+        <a href="#" class="block text-gray-700 font-medium">Features</a>
+        <a href="#" class="block text-gray-700 font-medium">Contact Us</a>
+
+    </div>
+
+</nav>
+
+<script>
+    const menuBtn = document.getElementById('mobileBtn');
+    const mobileMenu = document.getElementById('mobileMenu');
+
+    menuBtn.addEventListener('click', () => {
+        mobileMenu.classList.toggle('open');
+    });
+</script>
+
+</body>
+</html>

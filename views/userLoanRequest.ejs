@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Nova Bank - Loan Request</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+        body { font-family: 'Poppins', sans-serif; background: #f8f8fb; }
+    </style>
+</head>
+<body>
+    <%- include('partials/header') %>
+
+    <main class="max-w-xl mx-auto px-4 md:px-8 py-10">
+        <h2 class="text-3xl font-extrabold text-gray-900 mb-6 border-b pb-2">Loan Request</h2>
+        
+        <% if (error) { %>
+            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg mb-8" role="alert">
+                <p class="font-medium">Error: <%= error %></p>
+            </div>
+        <% } %>
+
+        <div class="bg-white p-6 rounded-xl shadow-lg border-t-4 border-green-500">
+            <p class="text-gray-600 mb-6">Please fill in the required details. Your request will be processed within 24 hours.</p>
+            
+            <form method="POST" action="/user/loan-request" class="space-y-4">
+                <!-- Loan Amount Input -->
+                <div class="flex items-center border bg-green-500/5 border-gray-500/10 rounded-lg pl-3 focus-within:border-green-400 transition">
+                    <span class="text-gray-400 text-lg">₹</span>
+                    <input name="loanAmount" type="number" step="1000" min="1000" class="w-full outline-none bg-transparent py-3 pl-2 text-gray-800" placeholder="Loan Amount" required />
+                </div>
+                
+                <!-- Loan Reason Textarea -->
+                <textarea name="loanReason" rows="3" class="w-full outline-none bg-green-500/5 border border-gray-500/10 p-3 rounded-lg focus:border-green-400 transition text-gray-800" placeholder="Reason for Loan" required></textarea>
+                
+                <div class="pt-4 flex justify-between gap-4">
+                    <a href="/user/dashboard" class="w-1/2 text-center bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold py-2.5 rounded-lg transition">Back</a>
+                    <button type="submit" class="w-1/2 bg-green-600 hover:bg-green-700 text-white font-semibold py-2.5 rounded-lg transition shadow-md shadow-green-200">
+                        Submit Request
+                    </button>
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <%- include('partials/footer') %>
+</body>
+</html>

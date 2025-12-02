@@ -1,0 +1,52 @@
+<%- include('partials/header', { 
+    title: 'Send Notice', 
+    session: session, 
+    error: typeof error !== 'undefined' ? error : null, 
+    message: typeof message !== 'undefined' ? message : null 
+}) %>
+
+<main>
+
+    <a href="/admin/dashboard" class="text-blue-600 hover:text-blue-800 font-medium mb-5 inline-flex items-center">
+        <i class="fas fa-arrow-left mr-2"></i>← Back to Dashboard
+    </a>
+
+    <h1 class="text-3xl font-extrabold text-gray-900 mb-6 flex items-center">
+        <i class="fas fa-envelope-open-text mr-3 text-blue-600"></i> <%= title %>
+    </h1>
+    
+    <p class="text-gray-600 mb-8">Send mass communications or specific notices to users via email (Simulated).</p>
+
+    <div class="bg-white p-6 md:p-8 rounded-xl shadow-lg border border-gray-100 max-w-2xl">
+        <form action="/admin/send-notice" method="POST" class="space-y-4">
+            
+            <div class="form-group">
+                <label for="recipient" class="block text-sm font-medium text-gray-700 mb-1">Recipient:</label>
+                <select name="recipient" id="recipient" required class="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500">
+                    <option value="all">All Users (Mass Notice)</option>
+                    <option value="specific">Specific User (Enter Email/A/C below)</option>
+                </select>
+            </div>
+
+             <div class="form-group">
+                <label for="email_ac" class="block text-sm font-medium text-gray-700 mb-1">Specific Recipient (Optional Email/A/C):</label>
+                <input type="text" name="email_ac" id="email_ac" placeholder="user@example.com or A/C number" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500">
+            </div>
+
+            <div class="form-group">
+                <label for="subject" class="block text-sm font-medium text-gray-700 mb-1">Subject:</label>
+                <input type="text" name="subject" id="subject" required class="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500">
+            </div>
+            
+            <div class="form-group">
+                <label for="body" class="block text-sm font-medium text-gray-700 mb-1">Email Body / Notice Content:</label>
+                <textarea name="body" id="body" rows="8" required class="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"></textarea>
+            </div>
+            
+            <button type="submit" class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-medium">
+                Send Notice
+            </button>
+        </form>
+    </div>
+</main>
+<%- include('partials/footer') %>

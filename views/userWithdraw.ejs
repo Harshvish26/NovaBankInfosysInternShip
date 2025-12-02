@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Nova Bank - Deposit</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+        body { font-family: 'Poppins', sans-serif; background: #f8f8fb; }
+    </style>
+</head>
+<body>
+    <%- include('partials/header') %>
+
+    <main class="max-w-xl mx-auto px-4 md:px-8 py-10">
+        <h2 class="text-3xl font-extrabold text-gray-900 mb-6 border-b pb-2">Deposit Funds</h2>
+        
+        <% if (error) { %>
+            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg mb-8" role="alert">
+                <p class="font-medium"><%= error %></p>
+            </div>
+        <% } %>
+
+        <div class="bg-white p-6 rounded-xl shadow-lg border-t-4 border-emerald-500">
+            <p class="text-gray-600 mb-4">Your Account: <strong class="text-indigo-600"><%= user.accountNumber %></strong></p>
+            <p class="text-xl font-bold mb-6">Balance: ₹<%= user.balance.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) %></p>
+            
+            <form method="POST" action="/user/withdraw" class="space-y-4">
+                <!-- Amount Input -->
+                <div class="flex items-center border bg-emerald-500/5 border-gray-500/10 rounded-lg pl-3 focus-within:border-emerald-400 transition">
+                    <span class="text-gray-400 text-lg">₹</span>
+                    <input name="amount" type="number" step="0.01" min="0.01" class="w-full outline-none bg-transparent py-3 pl-2 text-gray-800" placeholder="Enter Amount to Deposit" required />
+                </div>
+                
+                <!-- PIN Input -->
+                <div class="flex items-center border bg-emerald-500/5 border-gray-500/10 rounded-lg gap-3 pl-3 focus-within:border-emerald-400 transition">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6B7280" stroke-opacity=".6" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="feather feather-key"><path d="M12 11c-2.76 0-5 2.24-5 5s2.24 5 5 5c2.76 0 5-2.24 5-5s-2.24-5-5-5z"></path><path d="M22 2l-7 7m0 0l-7-7m7 7l7-7"></path><circle cx="12" cy="16" r="4"></circle></svg>
+                    <input name="pin" type="password" maxlength="6" class="w-full outline-none bg-transparent py-3 text-gray-800" placeholder="Confirm PIN" required />
+                </div>
+                
+                <div class="pt-2 flex justify-between gap-4">
+                    <a href="/user/dashboard" class="w-1/2 text-center bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold py-2.5 rounded-lg transition">Cancel</a>
+                    <button type="submit" class="w-1/2 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-2.5 rounded-lg transition shadow-md shadow-emerald-200">
+                        Withdraw Money
+                    </button>
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <%- include('partials/footer') %>
+</body>
+</html>

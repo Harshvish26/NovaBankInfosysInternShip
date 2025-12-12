@@ -1,0 +1,51 @@
+<%- include('partials/header', { 
+    title: 'Select Payment Utility', 
+    session: session, 
+    error: error, 
+    message: message 
+}) %>
+
+<link rel="icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIiBmaWxsPSJub25lIj48cGF0aCBkPSJNNiA5NCBMNiAxMCBMNTAuNSA4OCBMOTQgMTAgTDk0IDk0IiBzdHJva2U9IiM0RjQ2RTUiIHN0cm9rZS13aWR0aD0iMTIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPjxjaXJjbGUgY3g9IjUwIiBjeT0iMjgiIHI9IjgiIGZpbGw9IiMzQjgyRjYiLz48L3N2Zz4=" type="image/svg+xml">
+
+
+<main class="container mx-auto px-4 py-8">
+    
+    <div class="flex justify-between items-center mb-6">
+        <h1 class="text-3xl font-extrabold text-gray-900 flex items-center">
+            <i class="fas fa-wallet mr-3 text-red-600"></i> Utility Services
+        </h1>
+        <a href="/user/dashboard" class="text-blue-600 hover:text-blue-800 font-medium inline-flex items-center p-2 rounded-lg bg-gray-50 hover:bg-gray-100 transition duration-150 ease-in-out">
+            <i class="fas fa-arrow-left mr-2"></i><- Back To Dashboard
+        </a>
+    </div>
+
+    <p class="text-gray-600 mb-10 text-xl text-center">Please select the type of service you wish to recharge or pay for.</p>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+        
+        <a href="/user/mobile-offers" class="block bg-white p-6 rounded-xl shadow-lg border-t-4 border-indigo-600 text-center transform hover:scale-[1.02] hover:shadow-xl transition duration-300">
+            <i class="fas fa-mobile-alt text-5xl text-indigo-600 mb-4"></i>
+            <h2 class="text-xl font-bold text-gray-800 mb-2">Mobile Recharge</h2>
+            <p class="text-gray-600 text-sm">Top-up prepaid phones instantly.</p>
+        </a>
+
+        <a href="/user/pay-bills?type=dth" class="block bg-white p-6 rounded-xl shadow-lg border-t-4 border-green-600 text-center transform hover:scale-[1.02] hover:shadow-xl transition duration-300">
+            <i class="fas fa-tv text-5xl text-green-600 mb-4"></i>
+            <h2 class="text-xl font-bold text-gray-800 mb-2">DTH Recharge</h2>
+            <p class="text-gray-600 text-sm">Recharge your satellite TV connection.</p>
+        </a>
+
+        <a href="/user/pay-bills?type=electricity" class="block bg-white p-6 rounded-xl shadow-lg border-t-4 border-red-600 text-center transform hover:scale-[1.02] hover:shadow-xl transition duration-300">
+            <i class="fas fa-lightbulb text-5xl text-red-600 mb-4"></i>
+            <h2 class="text-xl font-bold text-gray-800 mb-2">Electricity Bill</h2>
+            <p class="text-gray-600 text-sm">Pay your monthly power bills.</p>
+        </a>
+        
+    </div>
+    
+    <div class="mt-10 text-center">
+        <p class="text-sm text-gray-500">Note: All payments are processed through the secure Nova Bank Transaction Gateway.</p>
+    </div>
+
+</main>
+<%- include('partials/footer') %>

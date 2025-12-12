@@ -5,39 +5,52 @@
     message: typeof message !== 'undefined' ? message : null 
 }) %>
 
-<main>
+<link rel="icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIiBmaWxsPSJub25lIj48cGF0aCBkPSJNNiA5NCBMNiAxMCBMNTAuNSA4OCBMOTQgMTAgTDk0IDk0IiBzdHJva2U9IiM0RjQ2RTUiIHN0cm9rZS13aWR0aD0iMTIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPjxjaXJjbGUgY3g9IjUwIiBjeT0iMjgiIHI9IjgiIGZpbGw9IiMzQjgyRjYiLz48L3N2Zz4=" type="image/svg+xml">
 
-    <a href="/admin/dashboard" class="text-blue-600 hover:text-blue-800 font-medium mb-5 inline-flex items-center">
-        <i class="fas fa-arrow-left mr-2"></i>← Back to Dashboard
-    </a>
+<main class="container mx-auto px-4 py-8">
 
-    <h1 class="text-3xl font-extrabold text-gray-900 mb-6 flex items-center">
-        <i class="fas fa-crown mr-3 text-blue-600"></i> <%= title %>
-    </h1>
+    <div class="flex justify-between items-center mb-6">
+        
+        <h1 class="text-3xl font-extrabold text-gray-900 flex items-center">
+            <i class="fas fa-crown mr-3 text-yellow-600"></i> <%= title %>
+        </h1>
+        
+        <a href="/admin/dashboard" class="text-blue-600 hover:text-blue-800 font-medium inline-flex items-center p-2 rounded-lg bg-gray-50 hover:bg-gray-100 transition duration-150 ease-in-out">
+            <i class="fas fa-arrow-left mr-2"></i><- Back To Dashboard
+        </a>
+    </div>
     
-    <p class="text-gray-600 mb-8">Review and manage users eligible for premium/VIP account upgrades (Simulated).</p>
+    <p class="text-gray-600 mb-8">Review and manage users eligible for premium/VIP account upgrades (Eligibility: **Balance > ₹ 50,000** as per backend).</p>
 
-    <div class="bg-white p-6 md:p-8 rounded-xl shadow-lg border border-gray-100">
-        <h3 class="text-xl font-semibold text-gray-800 mb-4">Eligible Users (Balance > ₹ 1,00,000)</h3>
+    <div class="bg-white p-6 md:p-8 rounded-xl shadow-2xl border border-gray-100">
+        <h3 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
+            <i class="fas fa-users mr-2 text-blue-500"></i> Eligible Users (<span class="text-green-600 ml-1 font-extrabold"><%= eligibleUsers.length %></span><pre> Found</pre>)
+        </h3>
+
         <% if (eligibleUsers && eligibleUsers.length > 0) { %>
-            <div class="overflow-x-auto">
+            <div class="overflow-x-auto border rounded-lg border-gray-200">
                 <table class="min-w-full divide-y divide-gray-200">
-                    <thead class="bg-blue-50/50">
+                    <thead class="bg-yellow-50/50">
                         <tr>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">Name</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">Account Number</th>
-                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-600 uppercase tracking-wider">Balance (₹)</th>
-                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-600 uppercase tracking-wider">Action</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Name</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Account Number</th>
+                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-700 uppercase tracking-wider">Current Balance (₹)</th>
+                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-700 uppercase tracking-wider">Action</th>
                         </tr>
                     </thead>
-                    <tbody class="bg-white divide-y divide-gray-200">
+                    <tbody class="bg-white divide-y divide-gray-100">
                         <% eligibleUsers.forEach(u => { %>
                         <tr class="hover:bg-blue-50/20">
                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900"><%= u.name %></td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600"><%= u.accountNumber %></td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm font-bold text-right text-green-600">₹ <%= u.balance.toLocaleString('en-IN', { minimumFractionDigits: 2 }) %></td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600 font-mono"><%= u.accountNumber %></td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-extrabold text-right text-green-700">
+                                ₹ <%= u.balance.toLocaleString('en-IN', { minimumFractionDigits: 2 }) %>
+                            </td>
                             <td class="px-6 py-4 whitespace-nowrap text-right text-sm">
-                                <button class="px-3 py-1.5 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 transition">Offer VIP Upgrade</button>
+                                <button onclick="alert('Offer sent to <%= u.name %> for VIP upgrade!');" 
+                                    class="px-3 py-1.5 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700 transition font-semibold shadow-md">
+                                    <i class="fas fa-star mr-1"></i> Offer VIP Upgrade
+                                </button>
                             </td>
                         </tr>
                         <% }) %>
@@ -45,7 +58,9 @@
                 </table>
             </div>
         <% } else { %>
-            <p class="text-gray-500 p-4 bg-gray-50 rounded-lg border border-gray-200 text-center">No users currently eligible for an upgrade.</p>
+            <p class="text-gray-600 p-4 bg-green-50 rounded-lg border border-green-300 text-center font-medium flex items-center justify-center">
+                 <i class="fas fa-check-circle mr-2"></i> No users currently eligible for an upgrade (Balance less than ₹ 50,000).
+            </p>
         <% } %>
     </div>
 </main>

@@ -1,5 +1,7 @@
 <%- include('partials/header', { title: 'Admin Dashboard', session: session, error: error, message: message }) %>
 
+<link rel="icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIiBmaWxsPSJub25lIj48cGF0aCBkPSJNNiA5NCBMNiAxMCBMNTAuNSA4OCBMOTQgMTAgTDk0IDk0IiBzdHJva2U9IiM0RjQ2RTUiIHN0cm9rZS13aWR0aD0iMTIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPjxjaXJjbGUgY3g9IjUwIiBjeT0iMjgiIHI9IjgiIGZpbGw9IiMzQjgyRjYiLz48L3N2Zz4=" type="image/svg+xml">
+
 <main>
     
     <!-- --- Main Dashboard Grid Layout (Two Columns, matching User Dashboard) --- -->
@@ -171,6 +173,7 @@
                 { title: "Send Notice", url: '/admin/send-notice', icon: 'fa-envelope-open-text', color: 'text-pink-600' },
                 { title: "System Logs", url: '/admin/system-logs', icon: 'fa-bug', color: 'text-gray-600' },
                 { title: "Upgrade Acc", url: '/admin/upgrade-accounts', icon: 'fa-crown', color: 'text-teal-600' },
+                { title: "Closure Requests", url: '/admin/requests', icon: 'fa-user-lock', color: 'text-red-700' },
                 { title: "Chat Support", url: '/admin/chats', icon: 'fa-comments', color: 'text-violet-600' },
             ];
 

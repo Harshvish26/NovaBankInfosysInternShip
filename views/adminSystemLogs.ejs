@@ -5,35 +5,49 @@
     message: typeof message !== 'undefined' ? message : null 
 }) %>
 
-<main>
+<link rel="icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIiBmaWxsPSJub25lIj48cGF0aCBkPSJNNiA5NCBMNiAxMCBMNTAuNSA4OCBMOTQgMTAgTDk0IDk0IiBzdHJva2U9IiM0RjQ2RTUiIHN0cm9rZS13aWR0aD0iMTIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPjxjaXJjbGUgY3g9IjUwIiBjeT0iMjgiIHI9IjgiIGZpbGw9IiMzQjgyRjYiLz48L3N2Zz4=" type="image/svg+xml">
 
-    <a href="/admin/dashboard" class="text-blue-600 hover:text-blue-800 font-medium mb-5 inline-flex items-center">
-        <i class="fas fa-arrow-left mr-2"></i>← Back to Dashboard
-    </a>
+<main class="container mx-auto px-4 py-8">
 
-    <h1 class="text-3xl font-extrabold text-gray-900 mb-6 flex items-center">
-        <i class="fas fa-bug mr-3 text-blue-600"></i> <%= title %>
-    </h1>
+    <div class="flex justify-between items-center mb-6">
+        
+        <h1 class="text-3xl font-extrabold text-gray-900 flex items-center">
+            <i class="fas fa-bug mr-3 text-red-600"></i> <%= title %>
+        </h1>
+        
+        <a href="/admin/dashboard" class="text-blue-600 hover:text-blue-800 font-medium inline-flex items-center p-2 rounded-lg bg-gray-50 hover:bg-gray-100 transition duration-150 ease-in-out">
+            <i class="fas fa-arrow-left mr-2"></i><- Back To Dashboard
+        </a>
+    </div>
     
     <p class="text-gray-600 mb-8">View system logs for debugging, security auditing, and monitoring purposes (Simulated).</p>
 
     <div class="bg-white p-6 md:p-8 rounded-xl shadow-lg border border-gray-100">
-        <h3 class="text-xl font-semibold text-gray-800 mb-4">Latest Log Entries</h3>
-        <div class="overflow-y-auto max-h-[60vh] bg-gray-900 text-white p-4 rounded-lg font-mono text-sm">
+        <h3 class="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+            <i class="fas fa-list-alt mr-2 text-gray-500"></i> Latest Log Entries
+        </h3>
+        
+        <div class="overflow-y-auto max-h-[60vh] bg-gray-900 text-white p-4 rounded-lg font-mono text-sm border border-gray-700">
             <% if (logs && logs.length > 0) { %>
-                <% logs.forEach(log => { 
-                    const color = log.level === 'ERROR' ? 'text-red-500' : (log.level === 'WARNING' ? 'text-yellow-500' : 'text-green-500');
-                %>
-                    <div class="border-b border-gray-800 pb-2 mb-2">
-                        <span class="text-gray-400 mr-2"><%= log.time %></span>
-                        <span class="font-bold <%= color %> mr-3"><%= log.level %>:</span>
-                        <span><%= log.message %></span>
-                    </div>
-                <% }) %>
+                <div class="space-y-2">
+                    <% logs.forEach(log => { 
+                        // Determine color based on log level
+                        const color = log.level === 'ERROR' ? 'text-red-500' : 
+                                      (log.level === 'WARNING' ? 'text-yellow-500' : 'text-green-500');
+                    %>
+                        <div class="pb-1 hover:bg-gray-800/50 transition duration-100">
+                            <span class="text-gray-400 mr-2 whitespace-nowrap"><%= log.time %></span>
+                            <span class="font-bold <%= color %> mr-3 whitespace-nowrap"><%= log.level %>:</span>
+                            <span class="break-words block sm:inline-block pl-10 sm:pl-0"><%= log.message %></span>
+                        </div>
+                    <% }) %>
+                </div>
             <% } else { %>
-                <p class="text-gray-500">No recent logs available.</p>
+                <p class="text-gray-500 text-center py-4">No recent logs available.</p>
             <% } %>
         </div>
+        
+        <p class="text-xs text-gray-500 mt-4">Note: Logs are currently simulated/limited to recent entries. Full log access requires backend file system integration.</p>
     </div>
 </main>
 <%- include('partials/footer') %>

@@ -1,0 +1,88 @@
+<%- include('partials/header', { 
+    title: 'Bill Payments & Recharge', 
+    session: session, 
+    error: error, 
+    message: message 
+}) %>
+
+<link rel="icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIiBmaWxsPSJub25lIj48cGF0aCBkPSJNNiA5NCBMNiAxMCBMNTAuNSA4OCBMOTQgMTAgTDk0IDk0IiBzdHJva2U9IiM0RjQ2RTUiIHN0cm9rZS13aWR0aD0iMTIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPjxjaXJjbGUgY3g9IjUwIiBjeT0iMjgiIHI9IjgiIGZpbGw9IiMzQjgyRjYiLz48L3N2Zz4=" type="image/svg+xml">
+
+
+<main class="container mx-auto px-4 py-8">
+    
+    <div class="flex justify-between items-center mb-6">
+        <h1 class="text-3xl font-extrabold text-gray-900 flex items-center">
+            <i class="fas fa-bolt mr-3 text-red-600"></i> Bill Payments
+        </h1>
+        <a href="/user/dashboard" class="text-blue-600 hover:text-blue-800 font-medium inline-flex items-center p-2 rounded-lg bg-gray-50 hover:bg-gray-100 transition duration-150 ease-in-out">
+            <i class="fas fa-arrow-left mr-2"></i><- Back To Dashboard
+        </a>
+    </div>
+
+    <p class="text-gray-600 mb-8">Quickly recharge mobile/DTH or pay utility bills directly from your Nova Bank account.</p>
+
+    <div class="bg-white p-6 md:p-8 rounded-xl shadow-2xl border border-gray-100 max-w-xl mx-auto">
+        <h2 class="text-2xl font-bold text-gray-800 mb-6 border-b pb-3">New Payment</h2>
+
+        <form action="/user/utility-payment" method="POST" class="space-y-6">
+
+            <div>
+                <label for="paymentType" class="block text-sm font-bold text-gray-700 mb-1">Select Payment Type:</label>
+                <select name="paymentType" id="paymentType" required class="w-full p-3 border border-gray-300 rounded-lg focus:ring-red-500 focus:border-red-500 bg-gray-50 transition duration-150">
+                    <option value="">-- Choose Type --</option>
+                    <option value="Mobile Recharge">Mobile Recharge</option>
+                    <option value="DTH Recharge">DTH Recharge</option>
+                    <option value="Electricity Bill">Electricity Bill Payment</option>
+                </select>
+            </div>
+            
+            <div>
+                <label for="billerId" class="block text-sm font-bold text-gray-700 mb-1">Phone / Consumer ID / Biller ID:</label>
+                <input type="text" name="billerId" id="billerId" required placeholder="e.g., 9876543210 or Consumer ID" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-red-500 focus:border-red-500 transition duration-150">
+            </div>
+
+            <div>
+                <label for="amount" class="block text-sm font-bold text-gray-700 mb-1">Amount (₹):</label>
+                <input type="number" name="amount" id="amount" required min="1" step="0.01" placeholder="e.g., 299 for Recharge" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-red-500 focus:border-red-500 transition duration-150">
+            </div>
+
+            <div>
+                <label for="pin" class="block text-sm font-bold text-gray-700 mb-1">Your 4-Digit PIN (Verification):</label>
+                <input type="password" name="pin" id="pin" required maxlength="4" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-red-500 focus:border-red-500 transition duration-150">
+            </div>
+            
+            <button type="submit" class="w-full px-6 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition font-extrabold flex items-center justify-center shadow-lg hover:shadow-xl">
+                 <i class="fas fa-money-check-alt mr-2"></i> Confirm Payment
+            </button>
+        </form>
+    </div>
+
+</main>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const urlParams = new URLSearchParams(window.location.search);
+        
+        const type = urlParams.get('type');
+        const billerId = urlParams.get('billerId');
+        const amount = urlParams.get('amount');
+
+        // Autofill Payment Type (Disabled field)
+        if (type && document.getElementById('paymentType')) {
+            document.getElementById('paymentType').value = type;
+        }
+        
+        // Autofill Biller ID (Editable field)
+        if (billerId && document.getElementById('billerId')) {
+            document.getElementById('billerId').value = billerId;
+            // Removed readonly, so user can change the number/ID
+        }
+        
+        // Autofill Amount (Read-only field)
+        if (amount && document.getElementById('amount')) {
+            document.getElementById('amount').value = amount;
+        }
+    });
+</script>
+
+<%- include('partials/footer') %>

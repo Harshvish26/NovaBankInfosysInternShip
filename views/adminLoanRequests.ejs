@@ -1,25 +1,35 @@
 <%- include('partials/header', { 
     title: 'Loan Requests', 
     session: session, 
-    // FIX: Safely pass error and message
     error: typeof error !== 'undefined' ? error : null, 
     message: typeof message !== 'undefined' ? message : null 
 }) %>
 
-<main>
+<link rel="icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIiBmaWxsPSJub25lIj48cGF0aCBkPSJNNiA5NCBMNiAxMCBMNTAuNSA4OCBMOTQgMTAgTDk0IDk0IiBzdHJva2U9IiM0RjQ2RTUiIHN0cm9rZS13aWR0aD0iMTIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPjxjaXJjbGUgY3g9IjUwIiBjeT0iMjgiIHI9IjgiIGZpbGw9IiMzQjgyRjYiLz48L3N2Zz4=" type="image/svg+xml">
 
-    <a href="/admin/dashboard" class="text-blue-600 hover:text-blue-800 font-medium mb-5 inline-flex items-center">
-        <i class="fas fa-arrow-left mr-2"></i>← Back to Dashboard
-    </a>
-
-    <h1 class="text-3xl font-extrabold text-gray-900 mb-6 flex items-center">
-        <i class="fas fa-dollar-sign mr-3 text-blue-600"></i> <%= title %>
-    </h1>
+<main class="container mx-auto px-4 py-8">
+    
+    <div class="flex justify-between items-center mb-6">
+        
+        <h1 class="text-3xl font-extrabold text-gray-900 flex items-center">
+            <i class="fas fa-dollar-sign mr-3 text-green-600"></i> <%= title %>
+        </h1>
+        
+        <a href="/admin/dashboard" class="text-blue-600 hover:text-blue-800 font-medium inline-flex items-center p-2 rounded-lg bg-gray-50 hover:bg-gray-100 transition duration-150 ease-in-out">
+            <i class="fas fa-arrow-left mr-2"></i><- Back To Dashboard
+        </a>
+    </div>
     
     <p class="text-gray-600 mb-8">Review and manage all incoming loan requests from registered users.</p>
 
     <div class="bg-white p-6 md:p-8 rounded-xl shadow-lg border border-gray-100">
         <% if (loans && loans.length > 0) { %>
+            <% 
+                const pendingLoans = loans.filter(loan => loan.status === 'Pending');
+                const otherLoans = loans.filter(loan => loan.status !== 'Pending');
+                const prioritizedLoans = [...pendingLoans, ...otherLoans];
+            %>
+
             <div class="overflow-x-auto">
                 <table class="min-w-full divide-y divide-gray-200">
                     <thead class="bg-blue-50/50">
@@ -33,27 +43,30 @@
                         </tr>
                     </thead>
                     <tbody class="bg-white divide-y divide-gray-200">
-                        <% loans.forEach(loan => { 
-                            const statusColor = loan.status === 'Approved' ? 'text-green-600' : (loan.status === 'Pending' ? 'text-yellow-600' : 'text-red-600');
+                        <% prioritizedLoans.forEach(loan => { 
+                            const statusColor = loan.status === 'Approved' ? 'text-green-600 bg-green-100' : 
+                                                (loan.status === 'Pending' ? 'text-yellow-700 bg-yellow-100 font-bold' : 'text-red-600 bg-red-100');
                         %>
-                        <tr class="hover:bg-blue-50/20">
+                        <tr class="<%= loan.status === 'Pending' ? 'bg-yellow-50/50' : 'hover:bg-blue-50/20' %>">
                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900"><%= loan.id %></td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600"><%= loan.accountNumber %></td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm font-bold text-right text-indigo-600">₹ <%= loan.amount.toLocaleString('en-IN') %></td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600"><%= loan.reason %></td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold <%= statusColor %>"><%= loan.status %></td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-extrabold text-right text-indigo-700">₹ <%= loan.amount.toLocaleString('en-IN') %></td>
+                            <td class="px-6 py-4 text-sm text-gray-600 max-w-xs truncate"><%= loan.reason %></td>
+                            <td class="px-6 py-4 whitespace-nowrap text-xs font-semibold">
+                                <span class="px-2 inline-flex leading-5 rounded-full <%= statusColor %>">
+                                    <%= loan.status %>
+                                </span>
+                            </td>
                             <td class="px-6 py-4 whitespace-nowrap text-right text-sm flex gap-2 justify-end">
                                 <% if (loan.status === 'Pending') { %>
-                                    <!-- Approve Form -->
-                                    <form method="POST" action="/admin/loan-request/approve/<%= loan.id %>">
-                                        <button type="submit" class="text-white px-3 py-1 bg-green-600 rounded-lg hover:bg-green-700 transition">Approve</button>
+                                    <form method="POST" action="/admin/loan-request/approve/<%= loan.id %>" onsubmit="return confirm('Are you sure you want to APPROVE loan ID <%= loan.id %>?');">
+                                        <button type="submit" class="text-white px-3 py-1 bg-green-600 rounded-lg hover:bg-green-700 transition font-semibold">Approve</button>
                                     </form>
-                                    <!-- Reject Form -->
-                                    <form method="POST" action="/admin/loan-request/reject/<%= loan.id %>">
-                                        <button type="submit" class="text-white px-3 py-1 bg-red-600 rounded-lg hover:bg-red-700 transition">Reject</button>
+                                    <form method="POST" action="/admin/loan-request/reject/<%= loan.id %>" onsubmit="return confirm('Are you sure you want to REJECT loan ID <%= loan.id %>?');">
+                                        <button type="submit" class="text-white px-3 py-1 bg-red-600 rounded-lg hover:bg-red-700 transition font-semibold">Reject</button>
                                     </form>
                                 <% } else { %>
-                                    <span class="px-3 py-1 border rounded-lg <%= statusColor %> border-current text-xs">STATUS: <%= loan.status.toUpperCase() %></span>
+                                    <a href="#" class="px-3 py-1 border rounded-lg border-gray-300 text-gray-500 text-xs hover:bg-gray-100">View Details</a>
                                 <% } %>
                             </td>
                         </tr>
@@ -62,7 +75,9 @@
                 </table>
             </div>
         <% } else { %>
-            <p class="text-gray-500 p-4 bg-gray-50 rounded-lg border border-gray-200 text-center">No outstanding loan requests found.</p>
+            <p class="text-gray-600 p-4 bg-blue-50 rounded-lg border border-blue-200 text-center flex items-center justify-center font-medium">
+                <i class="fas fa-info-circle text-blue-600 mr-2"></i> No outstanding loan requests found. All clear!
+            </p>
         <% } %>
     </div>
 </main>

@@ -1,0 +1,75 @@
+<%- include('partials/header', { 
+    title: 'Contact Us', 
+    session: session, 
+    error: typeof error !== 'undefined' ? error : null, 
+    message: typeof message !== 'undefined' ? message : null 
+}) %>
+
+<link rel="icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIiBmaWxsPSJub25lIj48cGF0aCBkPSJNNiA5NCBMNiAxMCBMNTAuNSA4OCBMOTQgMTAgTDk0IDk0IiBzdHJva2U9IiM0RjQ2RTUiIHN0cm9rZS13aWR0aD0iMTIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPjxjaXJjbGUgY3g9IjUwIiBjeT0iMjgiIHI9IjgiIGZpbGw9IiMzQjgyRjYiLz48L3N2Zz4=" type="image/svg+xml">
+
+<main class="container mx-auto px-4 py-12">
+    
+    <div class="text-center mb-12">
+        <h1 class="text-4xl font-extrabold text-gray-900 mb-4">Reach Nova Bank Support 💬</h1>
+        <p class="text-xl text-gray-600 max-w-3xl mx-auto">We are here to help you 24/7. Choose the best way to get in touch with our team.</p>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        
+        <div class="lg:col-span-1 space-y-6">
+            
+            <div class="bg-white p-6 rounded-xl shadow-lg border-l-4 border-blue-600">
+                <i class="fas fa-phone-alt text-2xl text-blue-600 mb-2"></i>
+                <h3 class="text-xl font-bold text-gray-800">Phone Support</h3>
+                <p class="text-gray-600">Call us for immediate assistance (Available 9 AM - 6 PM IST).</p>
+                <p class="text-blue-700 font-bold mt-2 text-lg">Toll-Free: 1800-123-4567</p>
+            </div>
+            
+            <div class="bg-white p-6 rounded-xl shadow-lg border-l-4 border-green-600">
+                <i class="fas fa-envelope text-2xl text-green-600 mb-2"></i>
+                <h3 class="text-xl font-bold text-gray-800">Email Support</h3>
+                <p class="text-gray-600">Send us your queries, and we will respond within 24 hours.</p>
+                <p class="text-green-700 font-bold mt-2 text-lg">Email: support@novabank.com</p>
+            </div>
+
+            <div class="bg-white p-6 rounded-xl shadow-lg border-l-4 border-purple-600">
+                <i class="fas fa-map-marker-alt text-2xl text-purple-600 mb-2"></i>
+                <h3 class="text-xl font-bold text-gray-800">Corporate Office</h3>
+                <p class="text-gray-600">Nova Bank Headquarters, Digital Plaza, Mumbai, India - 400001.</p>
+            </div>
+
+        </div>
+
+        <div class="lg:col-span-2 bg-white p-8 rounded-xl shadow-2xl border border-gray-100">
+            <h3 class="text-2xl font-extrabold text-gray-900 mb-6">Send Us a Message</h3>
+            <form action="#" method="POST" class="space-y-4">
+                
+                <div>
+                    <label for="name" class="block text-sm font-medium text-gray-700">Full Name</label>
+                    <input type="text" name="name" id="name" required class="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 mt-1">
+                </div>
+
+                <div>
+                    <label for="email" class="block text-sm font-medium text-gray-700">Email Address</label>
+                    <input type="email" name="email" id="email" required class="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 mt-1">
+                </div>
+                
+                <div>
+                    <label for="subject" class="block text-sm font-medium text-gray-700">Subject</label>
+                    <input type="text" name="subject" id="subject" required class="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 mt-1">
+                </div>
+
+                <div>
+                    <label for="message" class="block text-sm font-medium text-gray-700">Your Message</label>
+                    <textarea name="message" id="message" rows="5" required class="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 mt-1"></textarea>
+                </div>
+                
+                <button type="submit" class="w-full px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-extrabold shadow-md">
+                     <i class="fas fa-paper-plane mr-2"></i> Submit Inquiry
+                </button>
+            </form>
+        </div>
+    </div>
+</main>
+
+<%- include('partials/footer') %>

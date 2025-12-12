@@ -5,6 +5,8 @@ const nodemailer = require('nodemailer');
 const { ensureAuth } = require('../middleware/authMiddleware');
 const User = require('../models/User');
 const Transaction = require('../models/Transaction');
+const AccountClosureRequest = require('../models/AccountClosureRequest');
+const PDFDocument = require('pdfkit');
 
 // --- Email Transporter Configuration (Used for alerts/OTP) ---
 let transporter = null;
@@ -386,69 +388,135 @@ router.get('/calculate-interest', ensureAuth, async (req, res) => {
 
 
 // ==========================================================
-// 10. DOWNLOAD REPORT (Updated for inline email content)
+// 10. DOWNLOAD REPORT (Updated for ACTUAL PDF DOWNLOAD)
 // ==========================================================
 
 router.get('/download-report', ensureAuth, async (req, res) => {
     try {
         const user = await User.findById(req.session.userId);
 
-        // 1. Fetch ALL transactions
         const allTxs = await Transaction.find({ $or: [{ fromAccount: user.accountNumber }, { toAccount: user.accountNumber }] })
             .sort({ createdAt: -1 });
 
-        // 2. Generate a formatted report body (Text/CSV style for email)
-        let txRows = allTxs.map(tx => {
-            const date = tx.createdAt.toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' });
-            const type = tx.fromAccount === user.accountNumber ? 'DEBIT' : 'CREDIT';
-            const details = tx.fromAccount === user.accountNumber ? `To: ${tx.toAccount}` : `From: ${tx.fromAccount}`;
-            const amount = tx.amount.toFixed(2);
-            // Ensure padding handles varying lengths
-            return `${date.padEnd(25)} | ${type.padEnd(7)} | ₹${amount.padStart(10)} | ${details}`; 
-        }).join('\n');
+        const doc = new PDFDocument({ 
+            size: 'A4', 
+            margins: { top: 50, bottom: 50, left: 50, right: 50 } 
+        });
 
-        let reportBody = `
-Dear ${user.name},
+        const filename = `NovaBank_Statement_${user.accountNumber}_${new Date().toISOString().slice(0, 10)}.pdf`;
 
-Your comprehensive account statement report has been generated.
+        res.setHeader('Content-Type', 'application/pdf');
+        res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+        doc.pipe(res);
 
---- ACCOUNT SUMMARY ---
-Account Holder: ${user.name}
-Account Number: ${user.accountNumber}
-Current Balance: ₹ ${user.balance.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
-Report Generated On: ${new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' })}
+        // --- 1. Header and Summary ---
+        doc.font('Helvetica-Bold').fontSize(22).fillColor('#1F2937').text('NOVA BANK ACCOUNT STATEMENT', { align: 'center' });
+        doc.moveDown(0.2);
+        doc.fontSize(10).fillColor('#6B7280').text(`Date Generated: ${new Date().toLocaleString()}`, { align: 'center' });
+        doc.moveDown(1);
+        doc.lineWidth(1).lineCap('butt').strokeColor('#D1DDDB').moveTo(50, doc.y).lineTo(550, doc.y).stroke();
+        doc.moveDown(1.5);
 
---- TRANSACTION DETAILS ---
-Date/Time                              Type             Amount               Details
--------------------------------------------------------------------------------------------
-${txRows}                  
--------------------------------------------------------------------------------------------
+        // Summary
+        doc.fontSize(16).fillColor('#3B82F6').text('Account Summary:', { underline: true });
+        doc.moveDown(0.5);
 
-Thank you for banking with Nova Bank.
-        `;
+        doc.fontSize(12).fillColor('#1F2937');
+        doc.text('Account Holder:', 50, doc.y, { continued: true }).fillColor('#000000').text(` ${user.name}`);
+        doc.moveDown(0.3);
+        
+        doc.fillColor('#1F2937').text('Account Number:', 50, doc.y, { continued: true }).fillColor('#000000').text(` ${user.accountNumber}`);
+        doc.moveDown(0.3);
 
-        // 3. Send Email Alert with report content in the body
-        const mailOptions = {
-            from: `${process.env.FROM_NAME || "Nova Bank Statements"} <${process.env.EMAIL_USER}>`,
-            to: user.email,
-            subject: `Your Account Statement Report: A/C ${user.accountNumber}`,
-            text: reportBody,
+        doc.fillColor('#1F2937').text('City:', 50, doc.y, { continued: true }).fillColor('#000000').text(` ${user.city || 'N/A'}`);
+        doc.moveDown(0.8);
+        
+        doc.fillColor('#1F2937').font('Helvetica-Bold').text('Current Balance:', 50, doc.y, { continued: true })
+           .fillColor('#10B981').text(` ₹ ${user.balance.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`);
+        doc.moveDown(1.5);
+        doc.lineWidth(0.5).strokeColor('#E5E7EB').moveTo(50, doc.y).lineTo(550, doc.y).stroke();
+        doc.moveDown(1.5);
+
+
+        // --- 2. Transaction Details Table ---
+        doc.fontSize(16).fillColor('#3B82F6').text('Recent Transactions:', { underline: true });
+        doc.moveDown(0.5);
+
+        // Define Column Structure with fixed X-positions
+        // 🚨 IMPORTANT: These X values MUST be used for both Header and Data
+        const COLUMNS = [
+            { id: 'Date', x: 50, width: 60, align: 'left' },      // Starts at 50
+            { id: 'Type', x: 115, width: 60, align: 'left' },     // Starts at 115
+            { id: 'Flow', x: 190, width: 40, align: 'left' },     // Starts at 190
+            { id: 'Amount', x: 260, width: 100, align: 'right' }, // Starts at 260, Aligned Right
+            { id: 'Details', x: 380, width: 170, align: 'left' }  // Starts at 380
+        ];
+        
+        // Function to draw the header row
+        const drawHeader = () => {
+            let headerY = doc.y;
+            doc.font('Helvetica-Bold').fontSize(10).fillColor('#4B5563');
+            COLUMNS.forEach(col => {
+                doc.text(col.id.toUpperCase(), col.x, headerY, { width: col.width, align: col.align });
+            });
+            doc.moveDown(0.5);
+            doc.strokeColor('#D1D5DB').lineWidth(1).moveTo(50, doc.y).lineTo(550, doc.y).stroke();
+            doc.moveDown(0.5);
         };
+        
+        drawHeader(); // Initial header
+        
+        // Draw Table Rows
+        doc.font('Helvetica').fontSize(9).fillColor('#1F2937');
+        
+        allTxs.forEach(tx => {
+            // Check for pagination before drawing the row
+            if (doc.y + 20 > doc.page.height - doc.page.margins.bottom) {
+                doc.addPage();
+                drawHeader(); // New header on the new page
+            }
+            
+            const isDebit = tx.fromAccount === user.accountNumber && tx.type !== 'deposit';
+            const flowColor = isDebit ? '#EF4444' : '#10B981'; 
 
-        if (transporter) {
-            await transporter.sendMail(mailOptions);
-            console.log(`📨 Full statement sent to ${user.email}`);
-        }
+            const data = {
+                Date: tx.createdAt.toLocaleDateString('en-IN', { month: 'short', day: 'numeric' }),
+                Type: tx.type.toUpperCase(),
+                Flow: isDebit ? 'DEBIT' : 'CREDIT',
+                Amount: (isDebit ? '-' : '+') + tx.amount.toLocaleString('en-IN', { minimumFractionDigits: 2 }),
+                Details: tx.description || (isDebit ? `To A/C: ${tx.toAccount}` : `From A/C: ${tx.fromAccount}`),
+            };
+            
+            let rowY = doc.y; // Capture the starting Y position for this row
+            
+            // Draw all columns on the same rowY coordinate, using explicit X and Width
+            
+            // 1. Date
+            doc.text(data.Date, COLUMNS[0].x, rowY, { width: COLUMNS[0].width, align: COLUMNS[0].align });
 
-        // Redirect with message to confirm email sent
-        res.redirect('/user/dashboard?message=Account statement report sent to your registered email.');
+            // 2. Type
+            doc.text(data.Type, COLUMNS[1].x, rowY, { width: COLUMNS[1].width, align: COLUMNS[1].align });
+            
+            // 3. Flow (Colored)
+            doc.fillColor(flowColor).text(data.Flow, COLUMNS[2].x, rowY, { width: COLUMNS[2].width, align: COLUMNS[2].align });
+            
+            // 4. Amount (Aligned Right)
+            doc.fillColor(flowColor).text(data.Amount, COLUMNS[3].x, rowY, { width: COLUMNS[3].width, align: COLUMNS[3].align });
+
+            // 5. Details (Uncolored)
+            doc.fillColor('#1F2937').text(data.Details, COLUMNS[4].x, rowY, { width: COLUMNS[4].width, align: COLUMNS[4].align });
+
+            doc.moveDown(1); // Move to the next line for the next transaction
+        });
+        
+        // Finalize PDF
+        doc.end();
 
     } catch (err) {
-        console.error("Download Report Error:", err);
-        res.redirect('/user/dashboard?error=Failed to generate and send report.');
+        console.error("PDF Download Error:", err);
+        res.status(500).send('Failed to generate PDF report due to a server error.');
     }
 });
-
 
 // ==========================================================
 // 11. HELP & SUPPORT (Chat)
@@ -522,12 +590,17 @@ router.post('/freeze-account', ensureAuth, async (req, res) => {
 
 
 // ==========================================================
-// 13. CLOSE ACCOUNT (Permanent Deactivation)
+// 13. CLOSE ACCOUNT (Permanent Deactivation - UPDATED FOR ADMIN APPROVAL)
 // ==========================================================
 
 router.post('/close-account', ensureAuth, async (req, res) => {
     try {
         const { pin } = req.body;
+        
+        // 🚨 Make sure these models are imported at the top of userRouter.js
+        // const AccountClosureRequest = require('../models/AccountClosureRequest');
+        // const User = require('../models/User');
+        
         const user = await User.findById(req.session.userId);
         
         // PIN Verification is crucial for account closure
@@ -536,18 +609,259 @@ router.post('/close-account', ensureAuth, async (req, res) => {
             return res.redirect('/user/dashboard?error=PIN verification failed for account closure.');
         }
 
-        // --- DEMO FEATURE --- 
-        await User.deleteOne({ _id: user._id }); 
-        
-        // Log user out
-        req.session.destroy(() => {
-            res.redirect('/?message=Your Nova Bank account has been successfully closed.');
+        // 1. Check for existing pending request
+        const existingRequest = await AccountClosureRequest.findOne({ userId: user._id, status: 'Pending' });
+        if (existingRequest) {
+             return res.redirect('/user/dashboard?message=Your account closure request is already pending admin review.');
+        }
+
+        // 2. Create the request entry for admin panel
+        await AccountClosureRequest.create({
+            userId: user._id,
+            accountNumber: user.accountNumber,
+            userName: user.name,
+            userBalance: user.balance // Capture balance for admin review
         });
+
+        // 3. SEND EMAIL ALERT (Using await to ensure the process starts)
+        await sendTransactionAlert( // 🟢 FIX: Added 'await' here
+            user, 
+            'Account Closure Request', 
+            0, // Amount is 0 for non-monetary alert
+            'Your request for permanent account closure has been successfully submitted and is awaiting Admin review. Please check your spam folder if you do not see the email.',
+            'Nova Bank: Account Closure Request Received' // Custom Subject
+        );
+        
+        // 4. Log user out and give a confirmation message
+        req.session.destroy(() => {
+            res.redirect('/?message=Your account closure request has been successfully submitted for Admin approval. We will notify you once reviewed.');
+        });
+        
     } catch (err) {
-        console.error("Close Account Error:", err);
-        res.redirect('/user/dashboard?error=Account closure failed.');
+        console.error("Close Account Request Error:", err);
+        res.redirect('/user/dashboard?error=Failed to submit account closure request.');
     }
 });
+
+// ==========================================================
+// 14. MOBILE/DTH/BILL PAYMENTS (Combined Logic)
+// ==========================================================
+
+router.get('/pay-bills', ensureAuth, async (req, res) => {
+    const user = await User.findById(req.session.userId);
+    res.render('userBillPayment', { user, error: req.query.error || null, message: req.query.message || null });
+});
+
+router.post('/utility-payment', ensureAuth, async (req, res) => {
+    try {
+        const { amount, pin, paymentType, billerId } = req.body; 
+        const user = await User.findById(req.session.userId);
+
+        // 1. PIN Verification
+        const isPinValid = await bcrypt.compare(pin, user.pinHash);
+        if (!isPinValid) {
+            return res.redirect(`/user/pay-bills?error=PIN verification failed for ${paymentType}.`);
+        }
+        
+        const amt = Number(amount);
+        // ... (Validation checks for amt > 0) ...
+        if (user.balance < amt) {
+            return res.redirect(`/user/pay-bills?error=Insufficient balance for ${paymentType}.`);
+        }
+
+        // 🚨 CARD SPENDING LIMIT CHECK (Unchanged)
+        const cardLimit = user.cardLimit || 50000; 
+        if (user.isVirtualCardActive === false) {
+            return res.redirect(`/user/pay-bills?error=Error: Virtual Card is currently deactivated/frozen. Activate it to pay.`);
+        }
+        if (amt > cardLimit) {
+            return res.redirect(`/user/pay-bills?error=Transaction failed! Amount (₹${amt.toFixed(2)}) exceeds your set daily card limit (₹${cardLimit.toFixed(2)}).`);
+        }
+        
+
+        // -------------------------------------------------------------
+        // 🟢 FIX 1: Missing Transaction Logging and Email Alert Added Back
+        // -------------------------------------------------------------
+        
+        // 2. Perform Payment (Debit)
+        user.balance -= amt;
+        await user.save();
+        
+        // Log Transaction: Type is 'payment'
+        await Transaction.create({ 
+            fromAccount: user.accountNumber, 
+            toAccount: billerId, 
+            amount: amt, 
+            type: 'payment', // Important: type is 'payment'
+            description: `${paymentType} to ${billerId}` // Log description for clarity
+        });
+        
+        // Send Email Alert
+        sendTransactionAlert(user, paymentType, amt, `Payment successful to ${billerId}.`);
+        
+        // -------------------------------------------------------------
+        
+        res.redirect(`/user/dashboard?message=${paymentType} of ₹${amt.toFixed(2)} successful!`);
+    } catch (err) {
+        console.error("Utility Payment Error:", err);
+        res.redirect('/user/pay-bills?error=Payment failed due to server error.');
+
+    }
+});
+
+
+// ==========================================================
+// 15. VIRTUAL DEBIT CARD MANAGEMENT
+// ==========================================================
+
+router.get('/virtual-card', ensureAuth, async (req, res) => {
+    const user = await User.findById(req.session.userId);
+    
+    // Simulate card details (uses fields from the User model like isVirtualCardActive and cardLimit)
+    const cardDetails = {
+        // Masking the account number to simulate a card number display
+        cardNumber: user.accountNumber.slice(0, 4) + ' **** **** ' + user.accountNumber.slice(-4),
+        expiry: '12/28', // Fixed/Simulated expiry
+        cvv: user.accountNumber.slice(-3), // Simulated CVV based on A/C number
+        // Check if the status field exists on the user object, otherwise default to true
+        isActive: user.isVirtualCardActive !== undefined ? user.isVirtualCardActive : true,
+        limit: user.cardLimit || 50000 // Default limit if not set in DB
+    };
+    
+    // Renders the userVirtualCard.ejs template and passes the 'card' object
+    res.render('userVirtualCard', { 
+        user, 
+        card: cardDetails, 
+        error: req.query.error || null, 
+        message: req.query.message || null 
+    });
+});
+
+// Activate/Deactivate Card
+router.post('/toggle-card', ensureAuth, async (req, res) => {
+    try {
+        const user = await User.findById(req.session.userId);
+        
+        // Ensure the field exists in your User model for persistence
+        if (user.isVirtualCardActive === undefined) {
+             user.isVirtualCardActive = true; // Initialize if first time
+        }
+        
+        user.isVirtualCardActive = !user.isVirtualCardActive;
+        await user.save();
+        
+        const status = user.isVirtualCardActive ? 'Activated' : 'Deactivated';
+        res.redirect(`/user/virtual-card?message=Virtual card successfully ${status}.`);
+
+    } catch (err) {
+        console.error("Toggle Card Error:", err);
+        res.redirect('/user/virtual-card?error=Failed to toggle card status.');
+    }
+});
+
+
+// ==========================================================
+// 16. SET CARD LIMIT (New Feature)
+// ==========================================================
+
+router.post('/set-card-limit', ensureAuth, async (req, res) => {
+    try {
+        const { newLimit, pin } = req.body;
+        const user = await User.findById(req.session.userId);
+        
+        // 1. PIN Verification
+        const isPinValid = await bcrypt.compare(pin, user.pinHash);
+        if (!isPinValid) {
+            return res.redirect('/user/virtual-card?error=PIN verification failed. Limit not updated.');
+        }
+        
+        const limit = Number(newLimit);
+        if (isNaN(limit) || limit < 0) {
+            return res.redirect('/user/virtual-card?error=Invalid limit amount.');
+        }
+
+        // 2. Update Card Limit (This field needs to be added to your User model)
+        user.cardLimit = limit;
+        await user.save();
+        
+        res.redirect(`/user/virtual-card?message=Virtual card limit set to ₹${limit.toLocaleString('en-IN')}.`);
+
+    } catch (err) {
+        console.error("Set Card Limit Error:", err);
+        res.redirect('/user/virtual-card?error=Failed to set card limit.');
+    }
+});
+
+
+// ==========================================================
+// 13. UTILITY OPTIONS PAGE (New intermediate page)
+// ==========================================================
+
+router.get('/utility-options', ensureAuth, async (req, res) => {
+    // We don't need much data here, just rendering the options page
+    res.render('userBillOptions', { 
+        user: req.user, // Assuming you have user object attached to req from authMiddleware
+        title: 'Select Utility', 
+        error: req.query.error || null, 
+        message: req.query.message || null 
+    });
+});
+
+
+
+router.get('/mobile-offers', ensureAuth, async (req, res) => {
+    const user = await User.findById(req.session.userId);
+    const { operator, number } = req.query; 
+    
+    // --- UPDATED: 15 SIMULATED PLANS ---
+    const offers = [
+        // Daily Data Plans (Short to Long Term)
+        { id: 'O1', amount: 149, details: 'Unlimited Calls + 1GB/Day', validity: '20 Days', category: 'Data/Calls' },
+        { id: 'O2', amount: 239, details: 'Unlimited Calls + 1.5GB/Day', validity: '28 Days', category: 'Data/Calls' },
+        { id: 'O3', amount: 299, details: 'Unlimited Calls + 2GB/Day', validity: '28 Days', category: 'Data/Calls' },
+        { id: 'O4', amount: 479, details: 'Unlimited Calls + 1.5GB/Day', validity: '56 Days', category: 'Data/Calls' },
+        { id: 'O5', amount: 666, details: 'Unlimited Calls + 1.5GB/Day', validity: '84 Days', category: 'Data/Calls' },
+        
+        // High Data / Yearly Plans
+        { id: 'O6', amount: 849, details: 'Unlimited Calls + 3GB/Day', validity: '84 Days', category: 'High Data' },
+        { id: 'O7', amount: 1449, details: 'Unlimited Calls + 2GB/Day', validity: '180 Days', category: 'Long Term' },
+        { id: 'O8', amount: 2999, details: 'Unlimited Calls + 2.5GB/Day', validity: '365 Days', category: 'Yearly' },
+        { id: 'O9', amount: 3599, details: 'Unlimited Calls + 3GB/Day', validity: '365 Days', category: 'Yearly' },
+
+        // Voice/Talktime Only
+        { id: 'O10', amount: 99, details: '100 MB Data + ₹99 Talktime', validity: '28 Days', category: 'Voice' },
+        { id: 'O11', amount: 155, details: 'Unlimited Calls (FUP) + 1GB Total', validity: '24 Days', category: 'Voice' },
+
+        // Data Add-ons / Boosters
+        { id: 'O12', amount: 25, details: 'Data Booster Pack (2GB)', validity: 'Existing Plan' },
+        { id: 'O13', amount: 61, details: 'Data Booster Pack (6GB)', validity: 'Existing Plan' },
+        
+        // Low Cost / Entry Plans
+        { id: 'O14', amount: 19, details: 'Unlimited Calls + 100MB Total', validity: '2 Days', category: 'Budget' },
+        { id: 'O15', amount: 15, details: 'Emergency Talktime Loan', validity: 'Immediate' , category: 'Emergency'},
+    ];
+
+    res.render('userMobileOffers', { 
+        user, 
+        offers, 
+        operator: operator || 'Jio/Airtel', // Default operator for display
+        number: number || '73XXXXXXXX', // Default number for display
+        error: req.query.error || null ,
+        message: req.query.message || null
+    });
+});
+
+
+router.get('/features', (req, res) => {
+    res.render('features', { title: 'Bank Features', session: req.session });
+});
+
+router.get('/contact', (req, res) => {
+    res.render('contact', { title: 'Contact Us', session: req.session });
+});
+
+
+
 
 
 module.exports = router;

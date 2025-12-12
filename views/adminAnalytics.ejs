@@ -5,47 +5,110 @@
     message: typeof message !== 'undefined' ? message : null 
 }) %>
 
-<main class="pt-5">
-    <!-- Back to Dashboard Link -->
-    <a href="/admin/dashboard" class="text-blue-600 hover:text-blue-800 font-medium mb-5 inline-flex items-center">
-        <i class="fas fa-arrow-left mr-2"></i>← Back to Dashboard
-    </a>
+<link rel="icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIiBmaWxsPSJub25lIj48cGF0aCBkPSJNNiA5NCBMNiAxMCBMNTAuNSA4OCBMOTQgMTAgTDk0IDk0IiBzdHJva2U9IiM0RjQ2RTUiIHN0cm9rZS13aWR0aD0iMTIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPjxjaXJjbGUgY3g9IjUwIiBjeT0iMjgiIHI9IjgiIGZpbGw9IiMzQjgyRjYiLz48L3N2Zz4=" type="image/svg+xml">
 
-    <h1 class="text-3xl font-extrabold text-gray-900 mb-6 flex items-center">
-        <i class="fas fa-chart-bar mr-3 text-blue-600"></i> <%= title %>
-    </h1>
+
+<main class="container mx-auto px-4 py-8">
     
-    <p class="text-gray-600 mb-8">Analyze key financial trends and metrics across the entire Nova Bank system (Simulated).</p>
+    <div class="flex justify-between items-center mb-6">
+        <h1 class="text-3xl font-extrabold text-gray-900 flex items-center">
+            <i class="fas fa-chart-bar mr-3 text-blue-600"></i> <%= title %>
+        </h1>
+        <a href="/admin/dashboard" class="text-blue-600 hover:text-blue-800 font-medium inline-flex items-center p-2 rounded-lg bg-gray-50 hover:bg-gray-100 transition duration-150 ease-in-out">
+            <i class="fas fa-arrow-left mr-2"></i><- Back To Dashboard
+        </a>
+    </div>
+    
+    <p class="text-gray-600 mb-8">Analyze key financial trends and metrics across the entire Nova Bank system.</p>
 
-    <!-- Analytics Cards (Assuming avgBalance, avgTxAmount, totalLoanRequests are passed) -->
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-10">
-        
-        <div class="bg-white p-6 rounded-xl shadow-lg border-l-4 border-cyan-600">
+        <div class="bg-white p-6 rounded-xl shadow-lg border-l-4 border-cyan-600 hover:shadow-xl transition duration-300">
             <p class="text-sm font-medium text-gray-500 uppercase">Avg. Customer Balance</p>
-            <p class="text-3xl font-extrabold text-cyan-700 mt-1">
+            <p class="text-4xl font-extrabold text-cyan-700 mt-2">
                 ₹ <%= avgBalance || '0.00' %>
             </p>
         </div>
-
-        <div class="bg-white p-6 rounded-xl shadow-lg border-l-4 border-purple-600">
+        <div class="bg-white p-6 rounded-xl shadow-lg border-l-4 border-purple-600 hover:shadow-xl transition duration-300">
             <p class="text-sm font-medium text-gray-500 uppercase">Avg. Transaction Value</p>
-            <p class="text-3xl font-extrabold text-purple-700 mt-1">
+            <p class="text-4xl font-extrabold text-purple-700 mt-2">
                 ₹ <%= avgTxAmount || '0.00' %>
             </p>
         </div>
-
-        <div class="bg-white p-6 rounded-xl shadow-lg border-l-4 border-yellow-600">
+        <div class="bg-white p-6 rounded-xl shadow-lg border-l-4 border-yellow-600 hover:shadow-xl transition duration-300">
             <p class="text-sm font-medium text-gray-500 uppercase">Total Loan Requests</p>
-            <p class="text-3xl font-extrabold text-yellow-700 mt-1">
+            <p class="text-4xl font-extrabold text-yellow-700 mt-2">
                 <%= totalLoanRequests || 0 %>
             </p>
         </div>
     </div>
     
-    <!-- Placeholder for charts/graphs -->
-    <div class="bg-white p-6 rounded-xl shadow-lg border border-gray-100 h-96 flex items-center justify-center">
-        <p class="text-gray-500 text-lg font-medium">Data Visualization Area (Charts Placeholder)</p>
+    <div class="bg-white p-6 rounded-xl shadow-lg border border-gray-100">
+        <h2 class="text-xl font-semibold text-gray-800 mb-4">Core Financial Metrics Comparison</h2>
+        <div class="h-96">
+            <canvas id="metricsChart"></canvas>
+        </div>
     </div>
 
 </main>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // STEP 2: Fetch Data from EJS/Backend Variables
+        // Note: parseFloat is used to convert the string data into a number for the chart
+        const avgBalance = parseFloat('<%= avgBalance %>');
+        const avgTxAmount = parseFloat('<%= avgTxAmount %>');
+        const totalLoanRequests = parseInt('<%= totalLoanRequests %>'); // Assuming you want to show this count too
+
+        // STEP 3: Get the Canvas element
+        const ctx = document.getElementById('metricsChart').getContext('2d');
+
+        // STEP 4: Create the Chart
+        new Chart(ctx, {
+            type: 'bar', // Bar chart is great for comparison
+            data: {
+                labels: ['Avg. Balance (₹)', 'Avg. Tx Value (₹)'],
+                datasets: [{
+                    label: 'Financial Metrics',
+                    data: [avgBalance, avgTxAmount],
+                    backgroundColor: [
+                        'rgba(6, 182, 212, 0.7)', // Cyan for Balance
+                        'rgba(147, 51, 234, 0.7)' // Purple for Tx Value
+                    ],
+                    borderColor: [
+                        'rgba(6, 182, 212, 1)',
+                        'rgba(147, 51, 234, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false, // Allows chart to fill the 96 height div
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Amount (₹)'
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    title: {
+                        display: true,
+                        text: 'Average Metrics Comparison'
+                    }
+                }
+            }
+        });
+        
+        // You could add a second chart here for Loan Requests vs other data
+    });
+</script>
+
 <%- include('partials/footer') %>

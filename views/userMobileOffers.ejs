@@ -1,0 +1,120 @@
+<%- include('partials/header', { 
+    title: 'Mobile Recharge Offers', 
+    session: session, 
+    error: error, 
+    message: message 
+}) %>
+
+<main class="container mx-auto px-4 py-8">
+    
+    <div class="flex justify-between items-center mb-6">
+        <h1 class="text-3xl font-extrabold text-gray-900 flex items-center">
+            <i class="fas fa-mobile-alt mr-3 text-indigo-600"></i> Mobile Recharge Plans
+        </h1>
+        <a href="/user/utility-options" class="text-blue-600 hover:text-blue-800 font-medium inline-flex items-center p-2 rounded-lg bg-gray-50 hover:bg-gray-100 transition duration-150 ease-in-out">
+            <i class="fas fa-arrow-left mr-2"></i> ← Change Utility
+        </a>
+    </div>
+
+    <div class="max-w-6xl mx-auto bg-white p-6 md:p-8 rounded-xl shadow-2xl border border-gray-100">
+        
+        <h2 class="text-2xl font-bold text-gray-800 mb-6 border-b pb-3">Enter Details & Select Plan</h2>
+
+        <div class="mb-8 p-4 bg-indigo-50 border border-indigo-200 rounded-lg flex justify-between items-center">
+            <div>
+                <h3 class="font-bold text-indigo-700 mb-1 text-lg">Recharge For:</h3>
+                <p class="text-xl font-mono"><%= number %></p>
+                <p class="text-md text-gray-600">Operator: <%= operator %></p>
+            </div>
+            <button class="px-3 py-1 bg-indigo-600 text-white rounded-lg text-sm hover:bg-indigo-700">Change Details</button>
+        </div>
+
+
+        <div class="mb-6 border-b border-gray-200">
+            <nav id="plan-tabs" class="flex flex-wrap space-x-2 md:space-x-4" role="tablist">
+                <button type="button" data-category="all" class="tab-button active px-4 py-2 text-sm font-semibold rounded-t-lg transition duration-200 border-b-2 border-transparent text-indigo-600 hover:text-indigo-800" aria-selected="true">All Plans</button>
+                <button type="button" data-category="Data/Calls" class="tab-button px-4 py-2 text-sm font-semibold rounded-t-lg transition duration-200 border-b-2 border-transparent text-gray-600 hover:text-indigo-800">Daily Data</button>
+                <button type="button" data-category="Yearly" class="tab-button px-4 py-2 text-sm font-semibold rounded-t-lg transition duration-200 border-b-2 border-transparent text-gray-600 hover:text-indigo-800">Yearly</button>
+                <button type="button" data-category="Data Booster" class="tab-button px-4 py-2 text-sm font-semibold rounded-t-lg transition duration-200 border-b-2 border-transparent text-gray-600 hover:text-indigo-800">Data Booster</button>
+                <button type="button" data-category="Voice" class="tab-button px-4 py-2 text-sm font-semibold rounded-t-lg transition duration-200 border-b-2 border-transparent text-gray-600 hover:text-indigo-800">Voice Only</button>
+            </nav>
+        </div>
+        
+        <div id="offers-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <% offers.forEach(offer => { %>
+                <a href="/user/pay-bills?type=Mobile Recharge&billerId=<%= number %>&amount=<%= offer.amount %>" 
+                   data-category="<%= offer.category %>"
+                   class="offer-card block p-4 rounded-xl shadow-md border border-gray-200 text-left transition duration-200 
+                          <%= offer.category === 'Emergency' ? 'bg-red-50 hover:border-red-500' : 'bg-white hover:border-green-500 hover:bg-green-50/50' %>">
+                    
+                    <div class="flex justify-between items-start mb-2">
+                        <p class="text-3xl font-extrabold text-green-700">₹<%= offer.amount %></p>
+                        <i class="fas <%= offer.category === 'Yearly' ? 'fa-gift' : (offer.category === 'Emergency' ? 'fa-exclamation-circle text-red-600' : 'fa-mobile-alt') %> text-xl text-indigo-500"></i>
+                    </div>
+
+                    <p class="text-sm font-semibold text-gray-800"><%= offer.details %></p>
+                    <p class="text-xs text-gray-500 mt-1">Validity: **<%= offer.validity %>**</p>
+                    
+                    <div class="mt-3 text-right">
+                        <span class="text-sm font-bold text-white bg-green-600 px-3 py-1 rounded-lg hover:bg-green-700">Select & Pay</span>
+                    </div>
+                </a>
+            <% }) %>
+        </div>
+        
+        <div class="mt-8 pt-6 border-t border-gray-200">
+            <h3 class="text-xl font-bold text-gray-800 mb-4">Recharge with Custom Amount:</h3>
+            <form action="/user/pay-bills" method="GET" class="flex flex-col sm:flex-row gap-4 items-center">
+                <input type="hidden" name="type" value="Mobile Recharge">
+                <input type="hidden" name="billerId" value="<%= number %>"> 
+                
+                <input type="number" name="amount" required min="10" placeholder="Enter Custom Amount (₹)" 
+                       class="p-3 border border-gray-300 rounded-lg focus:ring-red-500 focus:border-red-500 flex-grow w-full sm:w-auto">
+                
+                <button type="submit" class="px-6 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition font-bold w-full sm:w-auto">
+                    Continue to Pay
+                </button>
+            </form>
+        </div>
+        
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const tabsContainer = document.getElementById('plan-tabs');
+            const offerCards = document.querySelectorAll('.offer-card');
+            
+            tabsContainer.addEventListener('click', (e) => {
+                const target = e.target;
+                if (target.classList.contains('tab-button')) {
+                    const selectedCategory = target.dataset.category;
+
+                    // Remove active status from all tabs
+                    document.querySelectorAll('.tab-button').forEach(btn => {
+                        btn.classList.remove('active', 'text-indigo-600', 'border-indigo-600');
+                        btn.classList.add('text-gray-600', 'border-transparent');
+                    });
+                    
+                    // Set active status on clicked tab
+                    target.classList.add('active', 'text-indigo-600', 'border-indigo-600');
+                    target.classList.remove('text-gray-600', 'border-transparent');
+
+                    // Filter and show/hide cards
+                    offerCards.forEach(card => {
+                        const cardCategory = card.dataset.category;
+                        if (selectedCategory === 'all' || cardCategory === selectedCategory) {
+                            card.style.display = 'block';
+                        } else {
+                            card.style.display = 'none';
+                        }
+                    });
+                }
+            });
+
+            // Set initial active state for 'All Plans' tab
+            document.querySelector('.tab-button[data-category="all"]').classList.add('active', 'text-indigo-600', 'border-indigo-600');
+            document.querySelector('.tab-button[data-category="all"]').classList.remove('text-gray-600', 'border-transparent');
+        });
+    </script>
+</main>
+<%- include('partials/footer') %>

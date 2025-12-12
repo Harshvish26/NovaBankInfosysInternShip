@@ -5,36 +5,47 @@
     message: typeof message !== 'undefined' ? message : null 
 }) %>
 
-<main>
+<link rel="icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIiBmaWxsPSJub25lIj48cGF0aCBkPSJNNiA5NCBMNiAxMCBMNTAuNSA4OCBMOTQgMTAgTDk0IDk0IiBzdHJva2U9IiM0RjQ2RTUiIHN0cm9rZS13aWR0aD0iMTIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPjxjaXJjbGUgY3g9IjUwIiBjeT0iMjgiIHI9IjgiIGZpbGw9IiMzQjgyRjYiLz48L3N2Zz4=" type="image/svg+xml">
 
-    <a href="/admin/dashboard" class="text-blue-600 hover:text-blue-800 font-medium mb-5 inline-flex items-center">
-        <i class="fas fa-arrow-left mr-2"></i>← Back to Dashboard
-    </a>
+<main class="container mx-auto px-4 py-8">
     
-    <h1 class="text-3xl font-extrabold text-gray-900 mb-6 flex items-center">
-        <i class="fas fa-shield-alt mr-3 text-blue-600"></i> <%= title %>
-    </h1>
+    <div class="flex justify-between items-center mb-6">
+        
+        <h1 class="text-3xl font-extrabold text-gray-900 flex items-center">
+            <i class="fas fa-shield-alt mr-3 text-red-600"></i> <%= title %>
+        </h1>
+        
+        <a href="/admin/dashboard" class="text-blue-600 hover:text-blue-800 font-medium inline-flex items-center p-2 rounded-lg bg-gray-50 hover:bg-gray-100 transition duration-150 ease-in-out">
+            <i class="fas fa-arrow-left mr-2"></i><- Back To Dashboard
+        </a>
+    </div>
     
-    <p class="text-gray-600 mb-8">Critical alerts requiring immediate administrative attention (Simulated).</p>
+    <p class="text-gray-600 mb-8">Critical alerts requiring immediate administrative attention (Simulated: Transactions over ₹50,000).</p>
 
     <div class="bg-white p-6 md:p-8 rounded-xl shadow-lg border border-gray-100">
         <% if (alerts && alerts.length > 0) { %>
             <div class="space-y-4">
                 <% alerts.forEach(alert => { %>
-                    <div class="p-4 bg-red-50 border border-red-400 rounded-lg flex justify-between items-center">
-                        <div>
-                            <p class="font-semibold text-red-700 text-lg"><%= alert.type %></p>
-                            <p class="text-sm text-gray-600">User A/C: <span class="font-mono"><%= alert.user %></span> | Amount: <%= alert.amount %> </p>
+                    <div class="p-4 bg-red-50 border border-red-400 rounded-lg flex flex-col sm:flex-row justify-between items-start sm:items-center transition duration-200 hover:shadow-md">
+                        <div class="mb-3 sm:mb-0">
+                            <p class="font-bold text-red-800 text-lg"><%= alert.type %></p>
+                            <p class="text-sm text-gray-700 mt-1">
+                                User A/C: <span class="font-mono bg-red-100 px-1 rounded"><%= alert.user %></span> | 
+                                Amount: <span class="font-extrabold text-red-600">₹<%= alert.amount.toLocaleString() %></span> 
+                            </p>
                             <p class="text-xs text-gray-500 mt-1">Reported: <%= alert.date.toLocaleString() %></p>
                         </div>
-                        <button class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition">
-                            Investigate / Block
-                        </button>
+                        
+                        <a href="/admin/view-user/<%= alert.id %>" class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition w-full sm:w-auto text-center">
+                             <i class="fas fa-search mr-1"></i> Investigate / Block
+                        </a>
                     </div>
                 <% }) %>
             </div>
         <% } else { %>
-            <p class="text-gray-500 p-4 bg-green-50 rounded-lg border border-green-200 text-center">No critical fraud alerts at this time. System is secure.</p>
+            <p class="text-gray-600 p-4 bg-green-50 rounded-lg border border-green-300 text-center flex items-center justify-center font-medium">
+                 <i class="fas fa-check-circle text-green-600 mr-2"></i> No critical fraud alerts at this time. System is secure.
+            </p>
         <% } %>
     </div>
 </main>

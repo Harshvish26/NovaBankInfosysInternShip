@@ -2,36 +2,35 @@
 <html>
 <%- include('partials/header', { title: 'Dashboard', session: session, error: error, message: message }) %>
 
-<main>
+<link rel="icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIiBmaWxsPSJub25lIj48cGF0aCBkPSJNNiA5NCBMNiAxMCBMNTAuNSA4OCBMOTQgMTAgTDk0IDk0IiBzdHJva2U9IiM0RjQ2RTUiIHN0cm9rZS13aWR0aD0iMTIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPjxjaXJjbGUgY3g9IjUwIiBjeT0iMjgiIHI9IjgiIGZpbGw9IiMzQjgyRjYiLz48L3N2Zz4=" type="image/svg+xml">
+
+<main class="container mx-auto px-4 py-8"> 
     
-    <!-- --- Main Dashboard Grid Layout --- -->
     <div class="flex flex-col lg:flex-row gap-8 mt-3">
         
-        <!-- Left Column: Quick Actions & Navigation (Vertical Services) -->
         <div class="w-full lg:w-1/4">
             <h3 class="text-xl font-bold text-gray-800 mb-4 border-b border-indigo-200 pb-2">Quick Services</h3>
             
-            <!-- Dynamic Vertical Action Links (using JavaScript for a clean structure) -->
             <div id="vertical-services" class="space-y-3">
-                <!-- Links will be injected here -->
-            </div>
+                </div>
             
-            <!-- Danger Zone link (outside injection for visibility) -->
-            <a href="#" onclick="document.getElementById('close-modal').classList.remove('hidden'); return false;" class="block mt-6 px-4 py-3 bg-red-50 text-red-600 border border-red-400 rounded-xl font-medium hover:bg-red-100 transition shadow-sm">
+            <a href="/user/freeze-account" 
+                class="block mt-6 px-4 py-3 bg-orange-50 text-orange-600 border border-orange-400 rounded-xl font-medium hover:bg-orange-100 transition shadow-sm">
+                <i class="fas fa-snowflake mr-2"></i> Freeze Account
+            </a>
+
+            <a href="#" onclick="document.getElementById('close-modal').classList.remove('hidden'); return false;" class="block mt-3 px-4 py-3 bg-red-50 text-red-600 border border-red-400 rounded-xl font-medium hover:bg-red-100 transition shadow-sm">
                 <i class="fas fa-exclamation-triangle mr-2"></i> Close Account Zone
             </a>
         </div>
 
-        <!-- Right Column: Main Content (Balance, Messages, Mini Statement) -->
         <div class="w-full lg:w-3/4">
 
-            <!-- Welcome & Balance Card -->
             <div class="bg-white p-6 md:p-8 rounded-xl shadow-lg border border-gray-100 mb-8">
                 <h2 class="text-3xl font-extrabold text-gray-900 mb-2">Welcome, <%= user.name %>!</h2>
                 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
                     
-                    <!-- Current Balance Display -->
                     <div class="p-5 bg-indigo-50 rounded-xl border-l-4 border-indigo-600 shadow-md">
                         <p class="text-lg text-gray-600 font-medium flex items-center mb-1">
                             <i class="fas fa-wallet text-xl text-indigo-600 mr-2"></i> Current Balance
@@ -41,20 +40,18 @@
                         </p>
                     </div>
 
-                    <!-- Account Info Card -->
                     <div class="p-5 bg-gray-50 rounded-xl border-l-4 border-gray-400 shadow-md">
                          <p class="text-lg text-gray-600 font-medium mb-1">
-                            <i class="fas fa-id-card text-xl text-gray-600 mr-2"></i> Account Details
-                        </p>
-                        <p class="text-xl font-bold text-gray-800">
-                            A/C: <%= user.accountNumber %>
-                        </p>
-                        <p class="text-sm text-gray-500 mt-1">City: <%= user.city %></p>
+                             <i class="fas fa-id-card text-xl text-gray-600 mr-2"></i> Account Details
+                         </p>
+                         <p class="text-xl font-bold text-gray-800">
+                             A/C: <%= user.accountNumber %>
+                         </p>
+                         <p class="text-sm text-gray-500 mt-1">City: <%= user.city %></p>
                     </div>
                 </div>
             </div>
             
-            <!-- Mini Statement (Latest Transactions) -->
             <section class="bg-white p-6 md:p-8 rounded-xl shadow-lg border border-gray-100">
                 <div class="flex justify-between items-center mb-6">
                     <h3 class="text-2xl font-semibold text-gray-800 flex items-center">
@@ -79,21 +76,22 @@
                             <tbody class="bg-white divide-y divide-gray-200">
                                 <% txs.forEach(tx => { %>
                                     <tr class="hover:bg-indigo-50/20 transition">
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium capitalize 
-                                            <% if (tx.type === 'deposit') { %>tx-deposit<% } else if (tx.type === 'withdraw') { %>tx-withdraw<% } else if (tx.type === 'transfer') { %>tx-transfer<% } %>">
-                                            <% if (tx.type === 'deposit') { %>Deposit<% } else if (tx.type === 'withdraw') { %>Withdrawal<% } else if (tx.type === 'transfer') { %>Transfer<% } %>
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
-                                            <%= tx.fromAccount === user.accountNumber ? 'To: ' + tx.toAccount : 'From: ' + tx.fromAccount %>
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-right 
-                                            <%= tx.fromAccount === user.accountNumber && tx.type !== 'deposit' ? 'text-red-600' : 'text-green-600' %>">
-                                            <%= tx.fromAccount === user.accountNumber && tx.type !== 'deposit' ? '-' : '+' %> 
-                                            <%= tx.amount.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) %>
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                            <%= new Date(tx.createdAt).toLocaleString('en-IN', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }) %>
-                                        </td>
+                                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium capitalize 
+                                             <% if (tx.type === 'deposit') { %>tx-deposit<% } else if (tx.type === 'withdraw') { %>tx-withdraw<% } else if (tx.type === 'transfer') { %>tx-transfer<% } %>">
+                                             <% if (tx.type === 'deposit') { %>Deposit<% } else if (tx.type === 'withdraw') { %>Withdrawal<% } else if (tx.type === 'transfer') { %>Transfer<% }else if 
+                                             (tx.type === 'payment') { %>Payment <% } %>
+                                         </td>
+                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                                             <%= tx.fromAccount === user.accountNumber ? 'To: ' + tx.toAccount : 'From: ' + tx.fromAccount %>
+                                         </td>
+                                         <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-right 
+                                             <%= tx.fromAccount === user.accountNumber && tx.type !== 'deposit' ? 'text-red-600' : 'text-green-600' %>">
+                                             <%= tx.fromAccount === user.accountNumber && tx.type !== 'deposit' ? '-' : '+' %> 
+                                             <%= tx.amount.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) %>
+                                         </td>
+                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                             <%= new Date(tx.createdAt).toLocaleString('en-IN', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }) %>
+                                         </td>
                                     </tr>
                                 <% }) %>
                             </tbody>
@@ -103,10 +101,7 @@
             </section>
         </div>
 
-    </div> <!-- End of Main Dashboard Grid Layout -->
-    
-    <!-- Close Account Modal (Kept outside the grid) -->
-    <div id="close-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+    </div> <div id="close-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
         <div class="bg-white rounded-xl shadow-2xl p-6 w-full max-w-sm">
             <h3 class="text-xl font-bold text-red-700 mb-4">Confirm Account Closure</h3>
             <p class="text-gray-600 mb-6">Enter your banking PIN to confirm permanent closure of your account.</p>
@@ -129,7 +124,6 @@
         </div>
     </div>
 
-    <!-- 💡 JAVASCRIPT FOR VERTICAL SERVICE LINKS INJECTION -->
     <script>
         // Helper function for rendering vertical links
         function renderVerticalLink(title, url, iconClass, colorClass) {
@@ -146,15 +140,27 @@
             
             if (container) {
                 const linksHtml = [
+                    // --- NEW FEATURES ADDED HERE ---
+                    renderVerticalLink('Bill Payments / Recharge', '/user/utility-options', 'fa-bolt', 'text-red-600'), // New Options Page
+                    renderVerticalLink('Virtual Debit Card', '/user/virtual-card', 'fa-credit-card', 'text-fuchsia-600'), // New Card Feature
+                    // ------------------------------
+
+                    // --- CORE BANKING ---
                     renderVerticalLink('Deposit Money', '/user/deposit', 'fa-arrow-circle-up', 'text-emerald-600'),
                     renderVerticalLink('Withdraw Money', '/user/withdraw', 'fa-arrow-circle-down', 'text-amber-600'),
                     renderVerticalLink('Transfer Funds', '/user/transfer', 'fa-exchange-alt', 'text-blue-600'),
+                    
+                    // --- ACCOUNT MANAGEMENT ---
                     renderVerticalLink('Full History', '/user/history', 'fa-history', 'text-purple-600'),
                     renderVerticalLink('Update Profile', '/user/profile', 'fa-user-edit', 'text-indigo-600'),
                     renderVerticalLink('Change PIN', '/user/change-pin', 'fa-key', 'text-pink-600'),
+                    
+                    // --- FINANCIAL TOOLS ---
                     renderVerticalLink('Loan Request', '/user/loan-request', 'fa-hand-holding-usd', 'text-yellow-600'),
                     renderVerticalLink('Calculate Interest', '/user/calculate-interest', 'fa-percent', 'text-cyan-600'), 
                     renderVerticalLink('Download Report', '/user/download-report', 'fa-file-download', 'text-teal-600'),
+                    
+                    // --- SUPPORT & LOGOUT ---
                     renderVerticalLink('Help & Support', '/user/chat', 'fa-headset', 'text-violet-600'),
                     renderVerticalLink('Logout', '/logout', 'fa-sign-out-alt', 'text-gray-700'), 
                 ];

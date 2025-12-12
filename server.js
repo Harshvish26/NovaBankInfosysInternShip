@@ -5,6 +5,7 @@ const MongoStore = require('connect-mongo');
 const bodyParser = require('body-parser');
 const path = require('path');
 const connectDB = require('./config/db');
+const mainRouter = require('./routes/mainRouter'); 
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -38,9 +39,11 @@ app.use((req, res, next) => {
 });
 
 // routes
+app.use('/', mainRouter);
 app.use('/', require('./routes/auth'));
 app.use('/user', require('./routes/user'));
 app.use('/admin', require('./routes/admin'));
+
 
 // home route
 app.get('/', (req, res) => res.render('home'));

@@ -1,0 +1,101 @@
+<%- include('partials/header', { 
+    title: 'Analytics & Trends', 
+    session: session, 
+    error: typeof error !== 'undefined' ? error : null, 
+    message: typeof message !== 'undefined' ? message : null 
+}) %>
+
+<link rel="icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIiBmaWxsPSJub25lIj48cGF0aCBkPSJNNiA5NCBMNiAxMCBMNTAuNSA4OCBMOTQgMTAgTDk0IDk0IiBzdHJva2U9IiM0RjQ2RTUiIHN0cm9rZS13aWR0aD0iMTIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPjxjaXJjbGUgY3g9IjUwIiBjeT0iMjgiIHI9IjgiIGZpbGw9IiMzQjgyRjYiLz48L3N2Zz4=" type="image/svg+xml">
+
+
+
+<div class="container mx-auto px-4 py-8">
+    
+    <div class="flex justify-between items-center mb-6">
+        <h1 class="text-3xl font-extrabold text-gray-900 flex items-center">
+            <i class="fas fa-lock mr-3 text-red-600"></i> Account Closure Requests
+        </h1>
+        <a href="/admin/dashboard" class="text-blue-600 hover:text-blue-800 font-medium inline-flex items-center p-2 rounded-lg bg-gray-50 hover:bg-gray-100 transition duration-150 ease-in-out">
+            <i class="fas fa-arrow-left mr-2"></i> ← Back to Dashboard
+        </a>
+    </div>
+
+    <% if (message) { %>
+        <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg mb-4 font-medium" role="alert"><%= message %></div>
+    <% } %>
+    <% if (error) { %>
+        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg mb-4 font-medium" role="alert"><%= error %></div>
+    <% } %>
+    
+    <p class="text-gray-600 mb-8">Review critical requests. Note: Accounts with negative balances (pending dues) should be rejected.</p>
+
+    <div class="bg-white shadow-2xl rounded-xl border border-gray-100 overflow-hidden">
+        
+        <% if (requests && requests.length > 0) { %>
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">User Name</th>
+                            <th class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Account Number</th>
+                            <th class="px-6 py-3 text-right text-xs font-bold text-gray-600 uppercase tracking-wider">Balance (₹)</th>
+                            <th class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Requested On</th>
+                            <th class="px-6 py-3 text-center text-xs font-bold text-gray-600 uppercase tracking-wider">Status</th>
+                            <th class="px-6 py-3 text-center text-xs font-bold text-gray-600 uppercase tracking-wider">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-100">
+                        <% requests.forEach(request => { %>
+                            <tr class="hover:bg-red-50/50">
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium"><%= request.userName %></td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-mono text-gray-600"><%= request.accountNumber %></td>
+                                
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-extrabold text-right
+                                    <%= request.userBalance < 0 ? 'text-red-700' : 'text-green-600' %>">
+                                    ₹ <%= request.userBalance.toLocaleString('en-IN', { minimumFractionDigits: 2 }) %>
+                                </td>
+                                
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500"><%= new Date(request.requestedAt).toLocaleString('en-IN', { dateStyle: 'short', timeStyle: 'short' }) %></td>
+                                
+                                <td class="px-6 py-4 whitespace-nowrap text-center">
+                                    <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full 
+                                        <%= request.status === 'Pending' ? 'bg-yellow-100 text-yellow-800' : 
+                                            request.status === 'Approved' ? 'bg-green-100 text-green-800' : 
+                                            'bg-red-100 text-red-800' %>">
+                                        <%= request.status %>
+                                    </span>
+                                </td>
+                                
+                                <td class="px-6 py-4 whitespace-nowrap text-center text-sm font-medium">
+                                    <% if (request.status === 'Pending') { %>
+                                        <form action="/admin/approve-closure/<%= request._id %>" method="POST">
+                                            <button type="submit" 
+                                                onclick="return confirm('WARNING: Are you sure you want to PERMANENTLY delete this account? Check for any pending dues!');" 
+                                                class="text-white bg-red-600 hover:bg-red-700 focus:ring-4 focus:ring-red-300 font-bold rounded-lg text-xs px-3 py-1.5 transition shadow-sm">
+                                                <i class="fas fa-trash-alt mr-1"></i> Approve & Delete
+                                            </button>
+                                        </form>
+                                    <% } else { %>
+                                        <span class="text-gray-400">Processed</span>
+                                    <% } %>
+                                </td>
+                            </tr>
+                        <% }) %>
+                    </tbody>
+                </table>
+            </div>
+        <% } else { %>
+            <div class="p-8 text-center bg-gray-50">
+                <i class="fas fa-check-circle text-5xl text-green-500 mb-3"></i>
+                <h3 class="text-xl font-semibold text-gray-700">No Pending Closure Requests Found!</h3>
+                <p class="text-gray-500 mt-1">System is clear. All users are happy or processed.</p>
+            </div>
+        <% } %>
+
+    </div>
+</div>
+
+
+
+
+<%- include('partials/footer') %>

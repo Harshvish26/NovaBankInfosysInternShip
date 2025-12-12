@@ -1,0 +1,114 @@
+<%- include('partials/header', { 
+    title: 'Virtual Card', 
+    session: session, 
+    error: error, 
+    message: message 
+}) %>
+
+<link rel="icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIiBmaWxsPSJub25lIj48cGF0aCBkPSJNNiA5NCBMNiAxMCBMNTAuNSA4OCBMOTQgMTAgTDk0IDk0IiBzdHJva2U9IiM0RjQ2RTUiIHN0cm9rZS13aWR0aD0iMTIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPjxjaXJjbGUgY3g9IjUwIiBjeT0iMjgiIHI9IjgiIGZpbGw9IiMzQjgyRjYiLz48L3N2Zz4=" type="image/svg+xml">
+
+
+<main class="container mx-auto px-4 py-8">
+    
+    <div class="flex justify-between items-center mb-6">
+        <h1 class="text-3xl font-extrabold text-gray-900 flex items-center">
+            <i class="fas fa-credit-card mr-3 text-purple-600"></i> Virtual Debit Card
+        </h1>
+        <a href="/user/dashboard" class="text-blue-600 hover:text-blue-800 font-medium inline-flex items-center p-2 rounded-lg bg-gray-50 hover:bg-gray-100 transition duration-150 ease-in-out">
+            <i class="fas fa-arrow-left mr-2"></i><- Back To Dashboard
+        </a>
+    </div>
+
+    <p class="text-gray-600 mb-8">Secure your online transactions by managing your virtual card settings and limits.</p>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        
+        <div>
+            <div class="bg-gradient-to-tr <%= card.isActive ? 'from-purple-600 to-indigo-700' : 'from-gray-500 to-gray-700' %> p-6 rounded-xl shadow-2xl h-60 flex flex-col justify-between text-white relative">
+                <div class="absolute top-4 right-4 text-xs font-bold px-3 py-1 rounded-full <%= card.isActive ? 'bg-green-500' : 'bg-red-500' %>">
+                    <%= card.isActive ? 'ACTIVE' : 'INACTIVE' %>
+                </div>
+                <div class="font-semibold text-lg">Nova Bank</div>
+                
+                <div class="space-y-4">
+                    <p class="text-2xl font-mono tracking-widest"><%= card.cardNumber %></p>
+                    <div class="flex justify-between items-end">
+                        <div>
+                            <p class="text-xs opacity-75">Card Holder</p>
+                            <p class="font-semibold uppercase"><%= user.name %></p>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-xs opacity-75">Expires</p>
+                            <p class="font-semibold"><%= card.expiry %></p>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-2absolute bottom-4 left-6 text-sm">
+                    CVV: <span class="font-mono bg-white/20 px-2 rounded cursor-pointer" onclick="alert('For security, CVV is masked. It is: <%= card.cvv %>')">***</span>
+                </div>
+            </div>
+
+            <div class="mt-6 bg-white p-6 rounded-xl shadow-lg border">
+                <h3 class="text-lg font-bold mb-3 flex items-center">
+                    <i class="fas fa-power-off mr-2 text-blue-600"></i> Card Status Control
+                </h3>
+                <p class="text-sm text-gray-600 mb-4">Temporarily block or unblock your card for security purposes.</p>
+                <form action="/user/toggle-card" method="POST">
+                    <button type="submit" class="w-full py-2 rounded-lg font-bold transition duration-200 
+                        <%= card.isActive ? 'bg-red-500 hover:bg-red-600 text-white' : 'bg-green-500 hover:bg-green-600 text-white' %>">
+                        <%= card.isActive ? 'Freeze / Deactivate Card' : 'Activate Card' %>
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <div class="bg-white p-8 rounded-xl shadow-2xl border border-gray-100">
+            <h2 class="text-2xl font-bold text-gray-800 mb-4 flex items-center">
+                <i class="fas fa-lock mr-2 text-yellow-600"></i> Set Spending Limit
+            </h2>
+            <p class="text-sm text-gray-600 mb-6">Your current daily transaction limit is: <span class="font-extrabold text-lg text-yellow-700">₹ <%= card.limit.toLocaleString('en-IN') %></span></p>
+
+            <form action="/user/set-card-limit" method="POST" class="space-y-5">
+                
+                <div>
+                    <label for="newLimit" class="block text-sm font-bold text-gray-700 mb-1">New Daily Limit (₹):</label>
+                    <input type="number" name="newLimit" id="newLimit" required min="1000" placeholder="e.g., 50000" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-yellow-500 focus:border-yellow-500 transition duration-150">
+                </div>
+
+                <div>
+                    <label for="pin" class="block text-sm font-bold text-gray-700 mb-1">Your 4-Digit PIN (Verification):</label>
+                    <input type="password" name="pin" id="pin" required maxlength="4" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-yellow-500 focus:border-yellow-500 transition duration-150">
+                </div>
+                
+                <button type="submit" class="w-full py-3 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700 transition font-extrabold shadow-md flex items-center justify-center">
+                     <i class="fas fa-cogs mr-2"></i> Update Limit
+                </button>
+            </form>
+        </div>
+        
+    </div>
+</main>
+
+ <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const currentLimitDisplay = document.getElementById('currentLimitDisplay');
+            
+            // --- Check for URL message after backend redirect ---
+            const urlParams = new URLSearchParams(window.location.search);
+            const successMessage = urlParams.get('message');
+            
+            if (successMessage && successMessage.includes('Virtual card limit set to')) {
+                // Extract the new limit value from the success message
+                const match = successMessage.match(/₹([\d,.]+)/); // Use regex to safely capture the new amount
+                
+                if (match && currentLimitDisplay) {
+                    currentLimitDisplay.textContent = match[0]; // Set the new formatted limit
+                    
+                    // Optional: Remove the message from the URL after applying the update
+                    // history.replaceState(null, '', window.location.pathname);
+                }
+            }
+        });
+    </script>
+
+<%- include('partials/footer') %>

@@ -1,0 +1,58 @@
+<%- include('partials/header', { 
+    title: 'Bank Features', 
+    session: session, 
+    error: typeof error !== 'undefined' ? error : null, 
+    message: typeof message !== 'undefined' ? message : null 
+}) %>
+
+<link rel="icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIiBmaWxsPSJub25lIj48cGF0aCBkPSJNNiA5NCBMNiAxMCBMNTAuNSA4OCBMOTQgMTAgTDk0IDk0IiBzdHJva2U9IiM0RjQ2RTUiIHN0cm9rZS13aWR0aD0iMTIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPjxjaXJjbGUgY3g9IjUwIiBjeT0iMjgiIHI9IjgiIGZpbGw9IiMzQjgyRjYiLz48L3N2Zz4=" type="image/svg+xml">
+
+<main class="container mx-auto px-4 py-12">
+    
+    <div class="text-center mb-12">
+        <h1 class="text-4xl font-extrabold text-gray-900 mb-4">✨ Nova Bank Key Features</h1>
+        <p class="text-xl text-gray-600 max-w-3xl mx-auto">Experience modern banking designed around you. Simple, secure, and smart financial solutions.</p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        
+        <div class="bg-white p-6 rounded-xl shadow-lg border-t-4 border-indigo-600 transform hover:scale-105 transition duration-300">
+            <i class="fas fa-mobile-alt text-4xl text-indigo-600 mb-4"></i>
+            <h2 class="text-2xl font-bold text-gray-800 mb-2">24/7 Digital Access</h2>
+            <p class="text-gray-600">Manage your accounts, pay bills, and transfer funds instantly, anytime, anywhere via our secure app.</p>
+        </div>
+
+        <div class="bg-white p-6 rounded-xl shadow-lg border-t-4 border-green-600 transform hover:scale-105 transition duration-300">
+            <i class="fas fa-shield-alt text-4xl text-green-600 mb-4"></i>
+            <h2 class="text-2xl font-bold text-gray-800 mb-2">Ironclad Security</h2>
+            <p class="text-gray-600">Advanced encryption and multi-factor authentication protect your money and data from fraud.</p>
+        </div>
+
+        <div class="bg-white p-6 rounded-xl shadow-lg border-t-4 border-yellow-600 transform hover:scale-105 transition duration-300">
+            <i class="fas fa-hand-holding-usd text-4xl text-yellow-600 mb-4"></i>
+            <h2 class="text-2xl font-bold text-gray-800 mb-2">Instant Loan Processing</h2>
+            <p class="text-gray-600">Apply for personal loans right from your dashboard and get instant approval based on eligibility.</p>
+        </div>
+
+        <div class="bg-white p-6 rounded-xl shadow-lg border-t-4 border-cyan-600 transform hover:scale-105 transition duration-300">
+            <i class="fas fa-chart-line text-4xl text-cyan-600 mb-4"></i>
+            <h2 class="text-2xl font-bold text-gray-800 mb-2">Detailed Analytics</h2>
+            <p class="text-gray-600">Get clear monthly and yearly transaction reports to track your savings and spending efficiently.</p>
+        </div>
+
+        <div class="bg-white p-6 rounded-xl shadow-lg border-t-4 border-purple-600 transform hover:scale-105 transition duration-300">
+            <i class="fas fa-comments text-4xl text-purple-600 mb-4"></i>
+            <h2 class="text-2xl font-bold text-gray-800 mb-2">Dedicated Support</h2>
+            <p class="text-gray-600">Quick and dedicated customer support via live chat and email to resolve any query swiftly.</p>
+        </div>
+
+        <div class="bg-white p-6 rounded-xl shadow-lg border-t-4 border-red-600 transform hover:scale-105 transition duration-300">
+            <i class="fas fa-piggy-bank text-4xl text-red-600 mb-4"></i>
+            <h2 class="text-2xl font-bold text-gray-800 mb-2">Zero Hidden Fees</h2>
+            <p class="text-gray-600">Enjoy transparent banking with no hidden charges and minimal account maintenance fees.</p>
+        </div>
+        
+    </div>
+</main>
+
+<%- include('partials/footer') %>
